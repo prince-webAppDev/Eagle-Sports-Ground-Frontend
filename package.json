@@ -1,34 +1,22 @@
 {
-  "name": "cricket-elite",
+  "name": "cricket-elite-monorepo",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "next": "^14.2.0",
-    "react": "^18.3.0",
-    "react-dom": "^18.3.0",
-    "@tanstack/react-query": "^5.40.0",
-    "@tanstack/react-query-devtools": "^5.40.0",
-    "axios": "^1.7.0",
-    "recharts": "^2.12.0",
-    "lucide-react": "^0.390.0",
-    "clsx": "^2.1.1",
-    "tailwind-merge": "^2.3.0"
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "dev:admin": "turbo dev --filter=admin",
+    "dev:match-center": "turbo dev --filter=match-center",
+    "build:admin": "turbo build --filter=admin",
+    "build:match-center": "turbo build --filter=match-center"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@types/react": "^18.3.0",
-    "@types/react-dom": "^18.3.0",
-    "typescript": "^5.4.0",
-    "tailwindcss": "^3.4.0",
-    "autoprefixer": "^10.4.0",
-    "postcss": "^8.4.0",
-    "eslint": "^8.0.0",
-    "eslint-config-next": "^14.2.0"
-  }
+    "turbo": "^2.0.0"
+  },
+  "packageManager": "npm@10.0.0"
 }

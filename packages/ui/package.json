@@ -1,0 +1,35 @@
+{
+  "name": "@cricket/ui",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./components": "./components/index.ts",
+    "./lib/api": "./lib/api.ts",
+    "./lib/utils": "./lib/utils.ts",
+    "./hooks": "./hooks/useQueries.ts",
+    "./context/QueryProvider": "./context/QueryProvider.tsx",
+    "./globals.css": "./styles/globals.css"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.40.0",
+    "@tanstack/react-query-devtools": "^5.40.0",
+    "axios": "^1.7.0",
+    "recharts": "^2.12.0",
+    "lucide-react": "^0.390.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.3.0"
+  },
+  "peerDependencies": {
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "next": "^14.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.4.0"
+  }
+}
