@@ -12,19 +12,36 @@ export const api = axios.create({
 export interface Team {
   _id: string
   name: string
-  shortName: string
-  logo: string
-  city: string
-  players: Player[]
+  shortName?: string
+  short_name?: string
+  logo?: string
+  logo_url?: string
+  city?: string
+  players?: Player[]
 }
 
 export interface Player {
   _id: string
   name: string
-  role: 'Batsman' | 'Bowler' | 'All-Rounder' | 'Wicket-Keeper'
-  avatar: string
-  jerseyNumber: number
-  stats: {
+  avatar?: string
+  image_url?: string
+  jerseyNumber?: number
+  position?: string
+  role?: string
+
+  // Basic Stats
+  matches_played?: number
+  total_runs?: number
+  total_wickets_taken?: number
+  highest_score?: number
+
+  // Computed Stats (Virtuals)
+  strike_rate?: number
+  batting_avg?: number
+  bowling_avg?: number
+  economy_rate?: number
+
+  stats?: {
     matches: number
     runs: number
     wickets: number
@@ -68,9 +85,11 @@ export interface Match {
   matchNumber: number
   venue: string
   date: string
-  status: 'upcoming' | 'live' | 'completed'
-  teamA: Team
-  teamB: Team
+  status: 'Upcoming' | 'live' | 'Completed'
+  team_a_id: Team
+  team_b_id: Team
+  teamA?: Team
+  teamB?: Team
   tossWinner?: string
   tossDecision?: 'bat' | 'bowl'
   innings: Innings[]
@@ -129,21 +148,31 @@ export const fetchTournament = () =>
 
 // ── Admin endpoints (require Bearer token) ───────────────────────────────────
 export const createTeam = (formData: FormData) =>
-  api.post('/api/teams', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  })
+  api.post('/api/teams', formData)
 
-export const addPlayer = (teamId: string, formData: FormData) =>
-  api.post(`/api/players/${teamId}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  })
+export const addPlayer = (formData: FormData) =>
+  api.post('/api/players', formData)
+
+export const fetchAdminTeamById = (id: string) =>
+  api.get(`/api/teams/${id}`).then((r) => r.data.data as Team)
+
+export const fetchPlayers = (teamId?: string) =>
+  api.get('/api/players', { params: { team_id: teamId } }).then((r) => r.data.data as Player[])
+
+export const updatePlayer = (id: string, formData: FormData) =>
+  api.patch(`/api/players/${id}`, formData)
+
+export const deletePlayer = (id: string) =>
+  api.delete(`/api/players/${id}`)
 
 export const updateScore = (matchId: string, payload: {
-  inningsIndex: number
-  runs: number
-  wickets: number
-  overs: number
-}) => api.patch(`/api/admin/matches/${matchId}/score`, payload)
+  inningsIndex?: number
+  runs?: number
+  wickets?: number
+  overs?: number
+  result?: string
+  status?: string
+}) => api.patch(`/api/matches/${matchId}/score`, payload)
 
 export const createMatch = (payload: {
   teamA: string
@@ -151,4 +180,4 @@ export const createMatch = (payload: {
   venue: string
   date: string
   matchNumber: number
-}) => api.post('/api/admin/matches', payload)
+}) => api.post('/api/matches', payload)

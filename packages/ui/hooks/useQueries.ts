@@ -5,6 +5,10 @@ import {
   fetchMatchById,
   fetchUpcomingMatches,
   fetchTeams,
+  fetchAdminTeamById,
+  fetchPlayers,
+  updatePlayer,
+  deletePlayer,
   fetchVenues,
   fetchTournament,
   createTeam,
@@ -68,6 +72,21 @@ export function useTournament() {
   })
 }
 
+export function useAdminTeam(id: string) {
+  return useQuery({
+    queryKey: ['admin', 'team', id],
+    queryFn: () => fetchAdminTeamById(id),
+    enabled: !!id,
+  })
+}
+
+export function usePlayers(teamId?: string) {
+  return useQuery({
+    queryKey: ['players', { teamId }],
+    queryFn: () => fetchPlayers(teamId),
+  })
+}
+
 // ─── Admin mutation hooks ────────────────────────────────────────────────────
 
 export function useCreateTeam() {
@@ -83,9 +102,32 @@ export function useCreateTeam() {
 export function useAddPlayer() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ teamId, formData }: { teamId: string; formData: FormData }) =>
-      addPlayer(teamId, formData),
+    mutationFn: ({ formData }: { teamId: string; formData: FormData }) =>
+      addPlayer(formData),
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ['teams'] })
+      qc.invalidateQueries({ queryKey: ['players', { teamId: vars.teamId }] })
+    },
+  })
+}
+
+export function useUpdatePlayer() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
+      updatePlayer(id, formData),
     onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['players'] })
+    },
+  })
+}
+
+export function useDeletePlayer() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => deletePlayer(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['players'] })
       qc.invalidateQueries({ queryKey: ['teams'] })
     },
   })
@@ -99,10 +141,12 @@ export function useUpdateScore() {
       ...payload
     }: {
       matchId: string
-      inningsIndex: number
-      runs: number
-      wickets: number
-      overs: number
+      inningsIndex?: number
+      runs?: number
+      wickets?: number
+      overs?: number
+      result?: string
+      status?: string
     }) => updateScore(matchId, payload),
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: ['match', vars.matchId] })

@@ -1,7 +1,7 @@
 'use client'
 
 import { useMatches, useTeams, useTournament, StatTile, MatchCard, MatchCardSkeleton, StatTileSkeleton, ActionBtn } from '@cricket/ui'
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from '@cricket/ui'
 import { Trophy, Users, Activity, Zap, PlusCircle, RefreshCw } from 'lucide-react'
 
 export default function AdminDashboard() {
@@ -40,33 +40,33 @@ export default function AdminDashboard() {
         {matchesLoading || teamsLoading
           ? Array.from({ length: 4 }).map((_, i) => <StatTileSkeleton key={i} />)
           : [
-              {
-                label: 'Total Teams',
-                value: teams?.length ?? 0,
-                icon: <Users className="w-4 h-4" />,
-                highlight: false,
-              },
-              {
-                label: 'Total Matches',
-                value: matches?.length ?? 0,
-                icon: <Trophy className="w-4 h-4" />,
-                highlight: false,
-              },
-              {
-                label: 'Live Now',
-                value: liveMatches.length,
-                icon: <Activity className="w-4 h-4" />,
-                highlight: liveMatches.length > 0,
-              },
-              {
-                label: 'Completed',
-                value: completedMatches.length,
-                icon: <Zap className="w-4 h-4" />,
-                highlight: false,
-              },
-            ].map((s) => (
-              <StatTile key={s.label} {...s} />
-            ))}
+            {
+              label: 'Total Teams',
+              value: teams?.length ?? 0,
+              icon: <Users className="w-4 h-4" />,
+              highlight: false,
+            },
+            {
+              label: 'Total Matches',
+              value: matches?.length ?? 0,
+              icon: <Trophy className="w-4 h-4" />,
+              highlight: false,
+            },
+            {
+              label: 'Live Now',
+              value: liveMatches.length,
+              icon: <Activity className="w-4 h-4" />,
+              highlight: liveMatches.length > 0,
+            },
+            {
+              label: 'Completed',
+              value: completedMatches.length,
+              icon: <Zap className="w-4 h-4" />,
+              highlight: false,
+            },
+          ].map((s) => (
+            <StatTile key={s.label} {...s} />
+          ))}
       </div>
 
       {/* Live Matches */}
@@ -78,7 +78,7 @@ export default function AdminDashboard() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {liveMatches.map((m) => (
-              <MatchCard key={m._id} match={m} />
+              <MatchCard key={m._id} match={m} isAdmin={true} />
             ))}
           </div>
         </section>
@@ -90,7 +90,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {matchesLoading
             ? Array.from({ length: 6 }).map((_, i) => <MatchCardSkeleton key={i} />)
-            : matches?.map((m) => <MatchCard key={m._id} match={m} />)}
+            : matches?.map((m) => <MatchCard key={m._id} match={m} isAdmin={true} />)}
         </div>
       </section>
 
@@ -114,10 +114,14 @@ export default function AdminDashboard() {
           ) : (
             teams?.map((team) => (
               <div key={team._id} className="flex items-center gap-4 px-4 py-3 hover:bg-ink-card/40 transition-colors">
-                <div className="w-8 h-8 rounded-full bg-ink-card flex items-center justify-center flex-shrink-0">
-                  <span className="text-xs font-headline font-bold text-gold">
-                    {team.shortName?.slice(0, 2)}
-                  </span>
+                <div className="w-10 h-10 rounded-full bg-ink-card flex items-center justify-center flex-shrink-0 border border-ink-border overflow-hidden">
+                  {team.logo_url ? (
+                    <img src={team.logo_url} alt={team.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-xs font-headline font-bold text-gold">
+                      {(team.short_name || team.shortName)?.slice(0, 2)}
+                    </span>
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-body font-semibold text-chalk text-sm truncate">{team.name}</p>

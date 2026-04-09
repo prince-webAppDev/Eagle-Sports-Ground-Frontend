@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/context/AuthContext'
+import { useAuth } from '@cricket/ui'
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 import Link from 'next/link'
@@ -20,6 +20,8 @@ import { cn } from '@cricket/ui'
 const ADMIN_NAV = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Add Team', href: '/add-team', icon: PlusCircle },
+  { label: 'Add Player', href: '/add-player', icon: Users },
+  { label: 'Schedule Match', href: '/create-match', icon: Trophy },
   { label: 'Update Score', href: '/update-score', icon: RefreshCw },
   { label: 'Teams', href: '/teams', icon: Users },
   { label: 'Matches', href: '/matches', icon: Trophy },

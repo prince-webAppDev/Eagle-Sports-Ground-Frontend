@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { QueryProvider } from '@cricket/ui'
-import { AuthProvider } from '@/context/AuthContext'
+import { QueryProvider, AuthProvider } from '@cricket/ui'
 
 export const metadata: Metadata = {
   title: 'Cricket Elite — Admin Panel',

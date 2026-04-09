@@ -87,7 +87,7 @@ export default function UpdateScorePage() {
             ) : (
               activeMatches.map((m) => (
                 <option key={m._id} value={m._id}>
-                  #{m.matchNumber} · {m.teamA.shortName} vs {m.teamB.shortName}
+                  #{m.matchNumber} · {m.teamA?.short_name || m.teamA?.shortName} vs {m.teamB?.short_name || m.teamB?.shortName}
                   {m.status === 'live' ? ' 🔴' : ''}
                 </option>
               ))
@@ -101,7 +101,7 @@ export default function UpdateScorePage() {
             <Activity className={cn('w-4 h-4', selectedMatch.status === 'live' ? 'text-live' : 'text-gold')} />
             <div>
               <p className="text-sm font-body font-semibold text-chalk">
-                {selectedMatch.teamA.name} vs {selectedMatch.teamB.name}
+                {selectedMatch.teamA?.name} vs {selectedMatch.teamB?.name}
               </p>
               <p className="text-xs text-chalk-muted">{selectedMatch.venue}</p>
             </div>
@@ -132,8 +132,8 @@ export default function UpdateScorePage() {
                 )}
               >
                 {i === 0 ? '1st Innings' : '2nd Innings'}
-                {selectedMatch && i === 0 && ` (${selectedMatch.teamA.shortName})`}
-                {selectedMatch && i === 1 && ` (${selectedMatch.teamB.shortName})`}
+                {selectedMatch && i === 0 && ` (${selectedMatch.teamA?.short_name || selectedMatch.teamA?.shortName})`}
+                {selectedMatch && i === 1 && ` (${selectedMatch.teamB?.short_name || selectedMatch.teamB?.shortName})`}
               </button>
             ))}
           </div>
