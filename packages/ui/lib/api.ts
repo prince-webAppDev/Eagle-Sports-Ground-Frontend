@@ -224,3 +224,9 @@ export const finalizeMatch = (matchId: string, payload: {
   innings: any[]
   individual_performances: any[]
 }) => api.patch(`/api/matches/${matchId}/finalize`, payload)
+
+export const deleteMatch = (id: string) =>
+  api.delete(`/api/matches/${id}`)
+
+export const updateMatch = (id: string, payload: { date: string, ground: string }) =>
+  api.patch(`/api/matches/${id}`, payload)

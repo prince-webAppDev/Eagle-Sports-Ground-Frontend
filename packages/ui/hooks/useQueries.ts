@@ -18,6 +18,8 @@ import {
   updateScore,
   createMatch,
   finalizeMatch,
+  deleteMatch,
+  updateMatch,
 } from '../lib/api'
 
 // ─── Public hooks ────────────────────────────────────────────────────────────
@@ -200,6 +202,27 @@ export function useFinalizeMatch() {
       qc.invalidateQueries({ queryKey: ['matches'] })
       qc.invalidateQueries({ queryKey: ['players'] })
       qc.invalidateQueries({ queryKey: ['teams'] })
+    },
+  })
+}
+export function useDeleteMatch() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => deleteMatch(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['matches'] })
+    },
+  })
+}
+
+export function useUpdateMatch() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, ...payload }: { id: string; date: string; ground: string }) =>
+      updateMatch(id, payload),
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ['matches'] })
+      qc.invalidateQueries({ queryKey: ['match', vars.id] })
     },
   })
 }
