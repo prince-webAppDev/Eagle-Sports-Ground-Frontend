@@ -84,6 +84,7 @@ export interface BowlerFigures {
 
 export interface Performance {
   player_id: Player
+  inning_number?: number
   runs_scored: number
   balls_faced: number
   fours: number

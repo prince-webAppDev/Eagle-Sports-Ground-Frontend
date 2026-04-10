@@ -56,6 +56,7 @@ export default function FinalizeMatchPage({ params }: { params: { matchId: strin
 
             setPerformances(match.scorecard.individual_performances.map(perf => ({
                 player_id: typeof perf.player_id === 'string' ? perf.player_id : perf.player_id?._id,
+                inning_number: perf.inning_number || 1,
                 runs_scored: perf.runs_scored,
                 balls_faced: perf.balls_faced,
                 fours: perf.fours,
@@ -74,9 +75,10 @@ export default function FinalizeMatchPage({ params }: { params: { matchId: strin
     }, [match])
 
     // ─── Handlers ───
-    const addPerformance = () => {
+    const addPerformance = (inning_number: number = 1) => {
         setPerformances([...performances, {
             player_id: '',
+            inning_number,
             runs_scored: 0,
             balls_faced: 0,
             fours: 0,
@@ -222,89 +224,96 @@ export default function FinalizeMatchPage({ params }: { params: { matchId: strin
                 </div>
 
                 {/* Individual Performances */}
-                <div className="lg:col-span-8 space-y-6">
-                    <div className="flex items-center justify-between">
-                        <h2 className="font-headline font-bold text-xl text-chalk flex items-center gap-2">
-                            <Users className="w-5 h-5 text-gold" /> Player Performances
-                        </h2>
-                        <ActionBtn variant="outline" size="sm" onClick={addPerformance}>
-                            <Plus className="w-4 h-4 mr-2" /> Add Player Row
-                        </ActionBtn>
-                    </div>
-
-                    <div className="bg-ink-card border border-ink-border rounded-2xl overflow-hidden overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead>
-                                <tr className="bg-ink-surface border-b border-ink-border">
-                                    <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider min-w-[200px]">Player</th>
-                                    <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">R</th>
-                                    <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">B</th>
-                                    <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">4s</th>
-                                    <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">6s</th>
-                                    <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">W</th>
-                                    <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">O</th>
-                                    <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">Runs C</th>
-                                    <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">Out?</th>
-                                    <th className="px-4 py-4 text-right"></th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-ink-border/50">
-                                {performances.map((perf, index) => (
-                                    <tr key={index} className="group hover:bg-ink-surface/50 transition-colors">
-                                        <td className="px-4 py-3">
-                                            <select
-                                                value={perf.player_id}
-                                                onChange={e => updatePerf(index, 'player_id', e.target.value)}
-                                                className="w-full bg-ink-surface border border-ink-border rounded-lg px-2 py-2 text-chalk text-sm outline-none focus:border-gold/30"
-                                            >
-                                                <option value="">Select Player</option>
-                                                <optgroup label={match.team_a_id.name}>
-                                                    {teamAPlayers?.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
-                                                </optgroup>
-                                                <optgroup label={match.team_b_id.name}>
-                                                    {teamBPlayers?.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
-                                                </optgroup>
-                                            </select>
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <input type="number" value={perf.runs_scored} onChange={e => updatePerf(index, 'runs_scored', parseInt(e.target.value))} className="w-14 bg-transparent border-b border-ink-border focus:border-gold text-chalk text-center text-sm" />
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <input type="number" value={perf.balls_faced} onChange={e => updatePerf(index, 'balls_faced', parseInt(e.target.value))} className="w-14 bg-transparent border-b border-ink-border focus:border-gold text-chalk text-center text-sm" />
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <input type="number" value={perf.fours} onChange={e => updatePerf(index, 'fours', parseInt(e.target.value))} className="w-12 bg-transparent border-b border-ink-border focus:border-gold text-chalk text-center text-sm" />
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <input type="number" value={perf.sixes} onChange={e => updatePerf(index, 'sixes', parseInt(e.target.value))} className="w-12 bg-transparent border-b border-ink-border focus:border-gold text-chalk text-center text-sm" />
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <input type="number" value={perf.wickets_taken} onChange={e => updatePerf(index, 'wickets_taken', parseInt(e.target.value))} className="w-12 bg-transparent border-b border-ink-border focus:border-gold text-chalk text-center text-sm" />
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <input type="number" step="0.1" value={perf.overs_bowled} onChange={e => updatePerf(index, 'overs_bowled', parseFloat(e.target.value))} className="w-14 bg-transparent border-b border-ink-border focus:border-gold text-chalk text-center text-sm" />
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <input type="number" value={perf.runs_conceded} onChange={e => updatePerf(index, 'runs_conceded', parseInt(e.target.value))} className="w-14 bg-transparent border-b border-ink-border focus:border-gold text-chalk text-center text-sm" />
-                                        </td>
-                                        <td className="px-4 py-3">
-                                            <input type="checkbox" checked={perf.was_dismissed} onChange={e => updatePerf(index, 'was_dismissed', e.target.checked)} className="w-4 h-4 rounded border-ink-border text-gold focus:ring-gold" />
-                                        </td>
-                                        <td className="px-4 py-3 text-right">
-                                            <button onClick={() => removePerf(index)} className="text-chalk-dim hover:text-live transition-colors">
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                        {performances.length === 0 && (
-                            <div className="py-12 text-center text-chalk-muted font-body italic">
-                                No player performances added yet. Click "Add Player Row" to start.
+                <div className="lg:col-span-8 space-y-12">
+                    {[1, 2].map(inningNum => (
+                        <div key={inningNum} className="space-y-6">
+                            <div className="flex items-center justify-between">
+                                <h2 className="font-headline font-bold text-xl text-chalk flex items-center gap-2">
+                                    <Users className="w-5 h-5 text-gold" /> Inning {inningNum} Performances
+                                </h2>
+                                <ActionBtn variant="outline" size="sm" onClick={() => addPerformance(inningNum)}>
+                                    <Plus className="w-4 h-4 mr-2" /> Add Player Row (Inning {inningNum})
+                                </ActionBtn>
                             </div>
-                        )}
-                    </div>
+
+                            <div className="bg-ink-card border border-ink-border rounded-2xl overflow-hidden overflow-x-auto">
+                                <table className="w-full text-left">
+                                    <thead>
+                                        <tr className="bg-ink-surface border-b border-ink-border">
+                                            <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider min-w-[200px]">Player</th>
+                                            <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">R</th>
+                                            <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">B</th>
+                                            <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">4s</th>
+                                            <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">6s</th>
+                                            <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">W</th>
+                                            <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">O</th>
+                                            <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">Runs C</th>
+                                            <th className="px-4 py-4 text-[10px] font-bold text-chalk-dim uppercase tracking-wider">Out?</th>
+                                            <th className="px-4 py-4 text-right"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-ink-border/50">
+                                        {performances
+                                            .map((perf, index) => ({ perf, index }))
+                                            .filter(({ perf }) => perf.inning_number === inningNum)
+                                            .map(({ perf, index }) => (
+                                                <tr key={index} className="group hover:bg-ink-surface/50 transition-colors">
+                                                    <td className="px-4 py-3">
+                                                        <select
+                                                            value={perf.player_id}
+                                                            onChange={e => updatePerf(index, 'player_id', e.target.value)}
+                                                            className="w-full bg-ink-surface border border-ink-border rounded-lg px-2 py-2 text-chalk text-sm outline-none focus:border-gold/30"
+                                                        >
+                                                            <option value="">Select Player</option>
+                                                            <optgroup label={match.team_a_id.name}>
+                                                                {teamAPlayers?.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
+                                                            </optgroup>
+                                                            <optgroup label={match.team_b_id.name}>
+                                                                {teamBPlayers?.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
+                                                            </optgroup>
+                                                        </select>
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <input type="number" value={perf.runs_scored} onChange={e => updatePerf(index, 'runs_scored', parseInt(e.target.value))} className="w-14 bg-transparent border-b border-ink-border focus:border-gold text-chalk text-center text-sm" />
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <input type="number" value={perf.balls_faced} onChange={e => updatePerf(index, 'balls_faced', parseInt(e.target.value))} className="w-14 bg-transparent border-b border-ink-border focus:border-gold text-chalk text-center text-sm" />
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <input type="number" value={perf.fours} onChange={e => updatePerf(index, 'fours', parseInt(e.target.value))} className="w-12 bg-transparent border-b border-ink-border focus:border-gold text-chalk text-center text-sm" />
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <input type="number" value={perf.sixes} onChange={e => updatePerf(index, 'sixes', parseInt(e.target.value))} className="w-12 bg-transparent border-b border-ink-border focus:border-gold text-chalk text-center text-sm" />
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <input type="number" value={perf.wickets_taken} onChange={e => updatePerf(index, 'wickets_taken', parseInt(e.target.value))} className="w-12 bg-transparent border-b border-ink-border focus:border-gold text-chalk text-center text-sm" />
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <input type="number" step="0.1" value={perf.overs_bowled} onChange={e => updatePerf(index, 'overs_bowled', parseFloat(e.target.value))} className="w-14 bg-transparent border-b border-ink-border focus:border-gold text-chalk text-center text-sm" />
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <input type="number" value={perf.runs_conceded} onChange={e => updatePerf(index, 'runs_conceded', parseInt(e.target.value))} className="w-14 bg-transparent border-b border-ink-border focus:border-gold text-chalk text-center text-sm" />
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        <input type="checkbox" checked={perf.was_dismissed} onChange={e => updatePerf(index, 'was_dismissed', e.target.checked)} className="w-4 h-4 rounded border-ink-border text-gold focus:ring-gold" />
+                                                    </td>
+                                                    <td className="px-4 py-3 text-right">
+                                                        <button onClick={() => removePerf(index)} className="text-chalk-dim hover:text-live transition-colors">
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                    </tbody>
+                                </table>
+                                {performances.filter(p => p.inning_number === inningNum).length === 0 && (
+                                    <div className="py-12 text-center text-chalk-muted font-body italic border-t border-ink-border">
+                                        No player performances added for Inning {inningNum}.
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>
