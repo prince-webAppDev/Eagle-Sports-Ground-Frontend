@@ -273,7 +273,7 @@ export default function MatchDetailPage({
         {/* Status bar */}
         <div className={cn(
           'h-1 w-full',
-          isLive ? 'bg-live animate-pulse' : match.status === 'upcoming' ? 'bg-gold' : 'bg-ink-border'
+          isLive ? 'bg-live animate-pulse' : match.status?.toLowerCase() === 'upcoming' ? 'bg-gold' : 'bg-ink-border'
         )} />
 
         <div className="p-6 sm:p-8">

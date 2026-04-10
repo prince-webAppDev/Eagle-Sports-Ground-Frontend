@@ -219,6 +219,8 @@ export const createMatch = (payload: {
   team_b_id: string
   date: string
   ground: string
+  startTime?: string
+  umpires?: string[]
 }) => api.post('/api/matches', payload)
 
 export const finalizeMatch = (matchId: string, payload: {
