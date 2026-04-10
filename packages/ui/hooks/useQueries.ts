@@ -12,6 +12,8 @@ import {
   fetchVenues,
   fetchTournament,
   createTeam,
+  updateTeam,
+  deleteTeam,
   addPlayer,
   updateScore,
   createMatch,
@@ -93,6 +95,28 @@ export function useCreateTeam() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (formData: FormData) => createTeam(formData),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['teams'] })
+    },
+  })
+}
+
+export function useUpdateTeam() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
+      updateTeam(id, formData),
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ['teams'] })
+      qc.invalidateQueries({ queryKey: ['admin', 'team', vars.id] })
+    },
+  })
+}
+
+export function useDeleteTeam() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => deleteTeam(id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['teams'] })
     },

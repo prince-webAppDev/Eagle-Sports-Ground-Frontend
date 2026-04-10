@@ -154,6 +154,12 @@ export const fetchTournament = () =>
 export const createTeam = (formData: FormData) =>
   api.post('/api/teams', formData)
 
+export const updateTeam = (id: string, formData: FormData) =>
+  api.patch(`/api/teams/${id}`, formData)
+
+export const deleteTeam = (id: string) =>
+  api.delete(`/api/teams/${id}`)
+
 export const addPlayer = (formData: FormData) =>
   api.post('/api/players', formData)
 

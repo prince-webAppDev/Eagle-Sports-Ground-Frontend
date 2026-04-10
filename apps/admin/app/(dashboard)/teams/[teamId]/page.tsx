@@ -46,6 +46,13 @@ export default function TeamManagePage({ params }: { params: { teamId: string } 
 
     const fileRef = useRef<HTMLInputElement>(null)
 
+    // Modal States
+    const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+    const [confirmDeleteName, setConfirmDeleteName] = useState('')
+    const [deleteConfirmText, setDeleteConfirmText] = useState('')
+
+    const [confirmEditPlayer, setConfirmEditPlayer] = useState<any>(null)
+
     const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file) return
@@ -63,13 +70,20 @@ export default function TeamManagePage({ params }: { params: { teamId: string } 
         setErrorMsg('')
     }
 
-    const startEdit = (player: any) => {
-        setName(player.name)
-        setRole(player.position || player.role || PLAYER_ROLES[0]) // Support both names
-        setImagePreview(player.image_url || player.avatar)
-        setEditingPlayerId(player._id)
-        setIsAddingNew(false)
-        setErrorMsg('')
+    const startEditFlow = (player: any) => {
+        setConfirmEditPlayer(player)
+    }
+
+    const openEditForm = () => {
+        if (confirmEditPlayer) {
+            setName(confirmEditPlayer.name)
+            setRole(confirmEditPlayer.position || confirmEditPlayer.role || PLAYER_ROLES[0])
+            setImagePreview(confirmEditPlayer.image_url || confirmEditPlayer.avatar)
+            setEditingPlayerId(confirmEditPlayer._id)
+            setIsAddingNew(false)
+            setErrorMsg('')
+            setConfirmEditPlayer(null)
+        }
     }
 
     const handleSubmit = async (e: FormEvent) => {
@@ -94,10 +108,12 @@ export default function TeamManagePage({ params }: { params: { teamId: string } 
         }
     }
 
-    const handleDelete = async (id: string, name: string) => {
-        if (confirm(`Are you sure you want to delete ${name}?`)) {
+    const handleDelete = async () => {
+        if (deleteConfirmText.toLowerCase() === 'yes' && confirmDeleteId) {
             try {
-                await deletePlayer(id)
+                await deletePlayer(confirmDeleteId)
+                setConfirmDeleteId(null)
+                setDeleteConfirmText('')
             } catch (err: any) {
                 alert(err?.response?.data?.message || 'Delete failed')
             }
@@ -299,10 +315,10 @@ export default function TeamManagePage({ params }: { params: { teamId: string } 
                                     </div>
                                 </div>
                                 <div className="flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button onClick={() => startEdit(player)} className="p-1.5 rounded-md hover:bg-gold/10 text-chalk-muted hover:text-gold transition-colors">
+                                    <button onClick={() => startEditFlow(player)} className="p-1.5 rounded-md hover:bg-gold/10 text-chalk-muted hover:text-gold transition-colors">
                                         <Pencil className="w-3.5 h-3.5" />
                                     </button>
-                                    <button onClick={() => handleDelete(player._id, player.name)} className="p-1.5 rounded-md hover:bg-live/10 text-chalk-muted hover:text-live transition-colors">
+                                    <button onClick={() => { setConfirmDeleteId(player._id); setConfirmDeleteName(player.name) }} className="p-1.5 rounded-md hover:bg-live/10 text-chalk-muted hover:text-live transition-colors">
                                         <Trash2 className="w-3.5 h-3.5" />
                                     </button>
                                 </div>
@@ -311,6 +327,80 @@ export default function TeamManagePage({ params }: { params: { teamId: string } 
                     )}
                 </div>
             </div>
+
+            {/* Delete Confirmation Modal */}
+            {confirmDeleteId && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-ink/80 backdrop-blur-sm">
+                    <div className="w-full max-w-md bg-ink-card border border-ink-border rounded-2xl p-6 shadow-2xl">
+                        <h2 className="text-xl font-headline font-bold text-chalk mb-2">Delete Player?</h2>
+                        <p className="text-chalk-muted mb-6">
+                            Are you sure you want to delete <span className="text-chalk font-bold">{confirmDeleteName}</span>?
+                            This action will permanently remove their matching stats.
+                        </p>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-bold text-chalk-dim uppercase tracking-wider mb-2">
+                                    Type "yes" to confirm
+                                </label>
+                                <input
+                                    type="text"
+                                    value={deleteConfirmText}
+                                    onChange={(e) => setDeleteConfirmText(e.target.value)}
+                                    placeholder="Type yes"
+                                    className="w-full bg-ink-surface border border-ink-border rounded-lg px-4 py-2 text-chalk focus:outline-none focus:border-live/50"
+                                />
+                            </div>
+                            <div className="flex gap-3">
+                                <ActionBtn
+                                    onClick={handleDelete}
+                                    disabled={deleteConfirmText.toLowerCase() !== 'yes'}
+                                    className="bg-live hover:bg-live/90 border-live"
+                                    fullWidth
+                                >
+                                    Delete Player
+                                </ActionBtn>
+                                <ActionBtn
+                                    variant="ghost"
+                                    onClick={() => { setConfirmDeleteId(null); setDeleteConfirmText('') }}
+                                    fullWidth
+                                >
+                                    Cancel
+                                </ActionBtn>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Confirmation Modal */}
+            {confirmEditPlayer && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-ink/80 backdrop-blur-sm">
+                    <div className="w-full max-w-md bg-ink-card border border-ink-border rounded-2xl p-6 shadow-2xl">
+                        <div className="w-12 h-12 bg-gold/10 rounded-full flex items-center justify-center mb-4">
+                            <Pencil className="w-6 h-6 text-gold" />
+                        </div>
+                        <h2 className="text-xl font-headline font-bold text-chalk mb-2">Edit Player?</h2>
+                        <p className="text-chalk-muted mb-6">
+                            Are you sure you want to change the details for <span className="text-chalk font-bold">{confirmEditPlayer.name}</span>?
+                        </p>
+                        <div className="flex gap-3">
+                            <ActionBtn
+                                onClick={openEditForm}
+                                fullWidth
+                            >
+                                Yes, Edit
+                            </ActionBtn>
+                            <ActionBtn
+                                variant="ghost"
+                                onClick={() => setConfirmEditPlayer(null)}
+                                fullWidth
+                            >
+                                Cancel
+                            </ActionBtn>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

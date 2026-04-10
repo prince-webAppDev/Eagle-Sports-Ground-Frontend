@@ -13,7 +13,7 @@ export { api, fetchMatches, fetchLiveMatches, fetchMatchById, fetchUpcomingMatch
 export type { Team, Player, Innings, BatsmanInnings, BowlerFigures, Match, Venue, Tournament } from './lib/api'
 
 // Hooks
-export { useMatches, useLiveMatches, useMatch, useUpcomingMatches, useTeams, useAdminTeam, usePlayers, useVenues, useTournament, useCreateTeam, useAddPlayer, useUpdatePlayer, useDeletePlayer, useUpdateScore, useCreateMatch } from './hooks/useQueries'
+export { useMatches, useLiveMatches, useMatch, useUpcomingMatches, useTeams, useAdminTeam, usePlayers, useVenues, useTournament, useCreateTeam, useUpdateTeam, useDeleteTeam, useAddPlayer, useUpdatePlayer, useDeletePlayer, useUpdateScore, useCreateMatch } from './hooks/useQueries'
 
 // Context
 export { QueryProvider } from './context/QueryProvider'
