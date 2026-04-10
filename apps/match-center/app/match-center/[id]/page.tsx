@@ -173,7 +173,7 @@ function InningsPanel({ innings, label }: { innings: Innings; label: string }) {
         <div className="flex items-center gap-3">
           <div className="relative w-10 h-10">
             <Image
-              src={innings.team?.logo || '/team-placeholder.png'}
+              src={innings.team?.logo_url || innings.team?.logo || '/team-placeholder.png'}
               alt={innings.team?.name ?? 'Team'}
               fill
               className="object-contain"
@@ -181,7 +181,12 @@ function InningsPanel({ innings, label }: { innings: Innings; label: string }) {
             />
           </div>
           <div>
-            <p className="font-headline font-bold text-chalk">{innings.team?.name ?? 'TBD'}</p>
+            <p className="font-headline font-bold text-chalk">
+              {innings.team?.name || 'TBD'} 
+              <span className="text-gold ml-2 opacity-50 text-xs">
+                ({innings.team?.shortName || innings.team?.short_name || '—'})
+              </span>
+            </p>
             <p className="text-xs text-chalk-muted font-body">{label}</p>
           </div>
         </div>
@@ -245,7 +250,13 @@ export default function MatchDetailPage({
     )
   }
 
-  const isLive = match.status === 'live'
+  // Robust data mapping
+  const teamA = match.teamA || match.team_a_id || {}
+  const teamB = match.teamB || match.team_b_id || {}
+  const teamALogo = teamA.logo_url || teamA.logo || '/team-placeholder.png'
+  const teamBLogo = teamB.logo_url || teamB.logo || '/team-placeholder.png'
+  const venueName = match.venue || match.ground || 'TBD'
+  const isLive = match.status?.toLowerCase() === 'live'
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
@@ -274,7 +285,7 @@ export default function MatchDetailPage({
               </span>
             )}
             <span className="flex items-center gap-1.5">
-              <MapPin className="w-3 h-3" /> {match.venue}
+              <MapPin className="w-3 h-3" /> {venueName}
             </span>
             <span className="flex items-center gap-1.5">
               <Calendar className="w-3 h-3" /> {formatDate(match.date)} · {match.startTime || formatTime(match.date)}
@@ -287,13 +298,13 @@ export default function MatchDetailPage({
           </div>
 
           {/* Teams Scoreboard */}
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-8">
+          <div className="flex flex-col sm:grid sm:grid-cols-[1fr_auto_1fr] items-center gap-8 sm:gap-4 md:gap-8">
             {/* Team A */}
             <div className="flex flex-col items-center sm:flex-row sm:items-center gap-3 sm:gap-4">
               <div className="relative w-16 h-16 sm:w-20 sm:h-20 img-hover-color">
                 <Image
-                  src={match.teamA?.logo || '/team-placeholder.png'}
-                  alt={match.teamA?.name ?? 'Team A'}
+                  src={teamALogo}
+                  alt={teamA.name || 'Team A'}
                   fill
                   className="object-contain"
                   sizes="80px"
@@ -301,9 +312,9 @@ export default function MatchDetailPage({
               </div>
               <div className="text-center sm:text-left">
                 <p className="font-headline font-black text-chalk text-lg sm:text-xl">
-                  {match.teamA?.shortName ?? 'TBD'}
+                  {teamA.shortName || teamA.short_name || 'TBD'}
                 </p>
-                <p className="text-chalk-dim text-xs font-body hidden sm:block">{match.teamA?.name ?? 'Team A'}</p>
+                <p className="text-chalk-dim text-xs font-body hidden sm:block">{teamA.name || 'Team A'}</p>
                 {match.innings?.[0] && (
                   <p className="font-headline font-black text-2xl sm:text-3xl text-gold mt-1">
                     {match.innings[0].runs}/{match.innings[0].wickets}
@@ -327,8 +338,8 @@ export default function MatchDetailPage({
             <div className="flex flex-col items-center sm:flex-row-reverse sm:items-center gap-3 sm:gap-4">
               <div className="relative w-16 h-16 sm:w-20 sm:h-20 img-hover-color">
                 <Image
-                  src={match.teamB?.logo || '/team-placeholder.png'}
-                  alt={match.teamB?.name ?? 'Team B'}
+                  src={teamBLogo}
+                  alt={teamB.name || 'Team B'}
                   fill
                   className="object-contain"
                   sizes="80px"
@@ -336,9 +347,9 @@ export default function MatchDetailPage({
               </div>
               <div className="text-center sm:text-right">
                 <p className="font-headline font-black text-chalk text-lg sm:text-xl">
-                  {match.teamB?.shortName ?? 'TBD'}
+                  {teamB.shortName || teamB.short_name || 'TBD'}
                 </p>
-                <p className="text-chalk-dim text-xs font-body hidden sm:block">{match.teamB?.name ?? 'Team B'}</p>
+                <p className="text-chalk-dim text-xs font-body hidden sm:block">{teamB.name || 'Team B'}</p>
                 {match.innings?.[1] && (
                   <p className="font-headline font-black text-2xl sm:text-3xl text-gold mt-1">
                     {match.innings[1].runs}/{match.innings[1].wickets}

@@ -32,7 +32,7 @@ export default function Navbar() {
                                 src="/logo.png" 
                                 alt="Eagle Ground Logo" 
                                 fill 
-                                className="object-contain grayscale brightness-0 invert"
+                                className="object-contain"
                                 sizes="48px"
                             />
                         </div>

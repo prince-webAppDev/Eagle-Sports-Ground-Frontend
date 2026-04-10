@@ -69,7 +69,7 @@ function Hero() {
           transition={{ delay: 0.4 }}
           className="text-gold font-headline font-bold tracking-[0.3em] uppercase text-xs mb-4"
         >
-          The Ultimate Cricket Experience
+          Game Ready
         </motion.p>
 
         {/* Main Heading */}
@@ -77,9 +77,9 @@ function Hero() {
           style={{ scale: textScale }}
           className="font-headline font-black text-6xl sm:text-8xl leading-[0.85] text-chalk mb-8 italic uppercase tracking-tighter"
         >
-          CHAMPION — SPORTS
+          Providing Quality
           <br />
-          <span className="text-gold-gradient">COACH & ACADEMY</span>
+          <span className="text-gold-gradient text-5xl sm:text-7xl">Venues and Expert Officials</span>
         </motion.h1>
 
         {/* Description */}
@@ -89,9 +89,9 @@ function Hero() {
           transition={{ delay: 0.6 }}
           className="font-body text-chalk-muted text-lg max-w-2xl mb-12 leading-relaxed"
         >
-          Champion is a stunning platform designed specifically for sports academies, 
-          professional trainers and coaching businesses. With its modern and sleek design, 
-          we offer a unique look that will attract your fans.
+          Stop worrying about the logistics and start focusing on your performance. 
+          We specialize in connecting teams with top-tier sports stadiums and certified umpires. 
+          Whether it&apos;s a friendly or a high-stakes tournament, we ensure your match is played at its best.
         </motion.p>
 
         {/* Action Button */}
@@ -100,8 +100,8 @@ function Hero() {
            animate={{ opacity: 1, scale: 1 }}
            transition={{ delay: 0.8 }}
         >
-          <ActionBtn href="/match-center" size="lg" className="px-12 py-6 text-xl bg-gold hover:bg-gold-light text-ink border-none">
-            EXPLORE DEMOS
+          <ActionBtn href="/venues" size="lg" className="px-12 py-6 text-xl bg-gold hover:bg-gold-light text-ink border-none">
+            EXPLORE VENUES
           </ActionBtn>
         </motion.div>
       </div>

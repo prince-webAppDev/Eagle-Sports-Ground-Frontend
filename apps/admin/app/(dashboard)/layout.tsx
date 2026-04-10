@@ -13,8 +13,11 @@ import {
   RefreshCw,
   LogOut,
   ChevronRight,
+  Menu,
+  X,
 } from 'lucide-react'
 import { cn } from '@cricket/ui'
+import { useState } from 'react'
 import Image from 'next/image'
 
 const ADMIN_NAV = [
@@ -38,7 +41,7 @@ function AdminSidebar({ onLogout }: { onLogout: () => void }) {
             src="/logo.png" 
             alt="Eagle Ground Logo" 
             fill 
-            className="object-contain grayscale brightness-0 invert"
+            className="object-contain brightness-0 invert"
             sizes="40px"
           />
         </div>
@@ -100,12 +103,19 @@ function AdminSidebar({ onLogout }: { onLogout: () => void }) {
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, isLoading, logout } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     if (!isLoading && !user) {
       router.replace('/')
     }
   }, [user, isLoading, router])
+
+  // Close mobile menu on logic navigation
+  useEffect(() => {
+    setIsMobileMenuOpen(false)
+  }, [pathname])
 
   if (isLoading) {
     return (
@@ -115,26 +125,50 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     )
   }
 
-  if (!user) return null // Redirect in progress
+  if (!user) return null
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar — hidden on mobile, shown md+ */}
-      <div className="hidden md:flex">
+    <div className="flex min-h-screen bg-ink relative">
+      {/* Mobile Sidebar Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-ink/80 backdrop-blur-sm md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar - Desktop */}
+      <div className="hidden md:flex sticky top-0 h-screen">
+        <AdminSidebar onLogout={logout} />
+      </div>
+
+      {/* Sidebar - Mobile */}
+      <div className={cn(
+        "fixed inset-y-0 left-0 z-50 transition-transform duration-300 md:hidden",
+        isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
         <AdminSidebar onLogout={logout} />
       </div>
 
       {/* Main */}
-      <main className="flex-1 overflow-auto bg-ink">
+      <main className="flex-1 min-w-0">
         {/* Mobile top bar */}
-        <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-ink-border bg-ink-surface">
-          <span className="font-headline font-bold text-gold text-sm">ADMIN</span>
+        <div className="md:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 border-b border-ink-border bg-ink-surface/80 backdrop-blur-md">
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-1 text-chalk-muted hover:text-gold transition-colors"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <span className="font-headline font-bold text-gold text-xs tracking-widest">EAGLE ADMIN</span>
+          </div>
           <button onClick={logout} className="text-chalk-muted hover:text-live transition-colors">
             <LogOut className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="p-6 lg:p-8">
+        <div className="p-4 sm:p-6 lg:p-8">
           {children}
         </div>
       </main>
