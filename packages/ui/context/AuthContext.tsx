@@ -16,7 +16,8 @@ interface AuthContextType {
     user: User | null
     accessToken: string | null
     isLoading: boolean
-    login: (username: string, password: string) => Promise<User>
+    login: (username: string, password: string) => Promise<any>
+    verifyOtp: (username: string, otp: string) => Promise<User>
     logout: () => Promise<void>
     refreshToken: () => Promise<string | null>
 }
@@ -65,7 +66,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 const original = error.config
                 const isAuthRequest = original.url?.includes('/api/auth/login') ||
                     original.url?.includes('/api/auth/refresh') ||
-                    original.url?.includes('/api/auth/logout')
+                    original.url?.includes('/api/auth/logout') ||
+                    original.url?.includes('/api/auth/verify-otp')
 
                 if (error.response?.status === 401 && !original._retry && !isAuthRequest) {
                     original._retry = true
@@ -85,12 +87,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, [accessToken, refreshToken])
 
-    const login = async (username: string, password: string): Promise<User> => {
+    const login = async (username: string, password: string): Promise<any> => {
         setIsLoading(true)
         try {
             const res = await api.post(
                 `/api/auth/login`,
                 { username, password },
+                { withCredentials: true }
+            )
+            return res.data.data
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const verifyOtp = async (username: string, otp: string): Promise<User> => {
+        setIsLoading(true)
+        try {
+            const res = await api.post(
+                `/api/auth/verify-otp`,
+                { username, otp },
                 { withCredentials: true }
             )
             const { accessToken: token, admin } = res.data.data
@@ -113,7 +129,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, accessToken, isLoading, login, logout, refreshToken }}>
+        <AuthContext.Provider value={{ user, accessToken, isLoading, login, verifyOtp, logout, refreshToken }}>
             {children}
         </AuthContext.Provider>
     )

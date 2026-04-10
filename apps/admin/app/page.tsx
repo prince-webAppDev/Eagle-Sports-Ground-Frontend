@@ -22,8 +22,12 @@ export default function AdminLoginPage() {
 
     setError('')
     try {
-      await login(username, password)
-      router.push('/dashboard')
+      const data = await login(username, password)
+      if (data?.otpRequired) {
+        router.push(`/verify-otp?username=${encodeURIComponent(username)}`)
+      } else {
+        router.push('/dashboard')
+      }
     } catch (err: unknown) {
       const msg =
         err instanceof Error
