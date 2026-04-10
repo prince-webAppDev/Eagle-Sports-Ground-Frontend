@@ -13,7 +13,7 @@ function addToCalendar(match: Match) {
   const end = new Date(start.getTime() + 4 * 60 * 60 * 1000) // +4h estimate
   const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
   const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
-    `${match.teamA.shortName} vs ${match.teamB.shortName}`
+    `${match.teamA?.shortName ?? 'TBD'} vs ${match.teamB?.shortName ?? 'TBD'}`
   )}&dates=${fmt(start)}/${fmt(end)}&details=${encodeURIComponent(
     `Match #${match.matchNumber} · ${match.venue}`
   )}&location=${encodeURIComponent(match.venue)}`
@@ -48,28 +48,28 @@ export default function FixtureList({ matches }: FixtureListProps) {
             <div className="flex items-center gap-2">
               <div className="relative w-5 h-5 flex-shrink-0">
                 <Image
-                  src={match.teamA.logo || '/team-placeholder.png'}
-                  alt={match.teamA.shortName}
+                  src={match.teamA?.logo || '/team-placeholder.png'}
+                  alt={match.teamA?.shortName ?? 'Team A'}
                   fill
                   className="object-contain"
                   sizes="20px"
                 />
               </div>
               <span className="text-sm font-headline font-bold text-chalk">
-                {match.teamA.shortName}
+                {match.teamA?.shortName ?? 'TBD'}
               </span>
               <span className="text-chalk-dim text-xs">vs</span>
               <div className="relative w-5 h-5 flex-shrink-0">
                 <Image
-                  src={match.teamB.logo || '/team-placeholder.png'}
-                  alt={match.teamB.shortName}
+                  src={match.teamB?.logo || '/team-placeholder.png'}
+                  alt={match.teamB?.shortName ?? 'Team B'}
                   fill
                   className="object-contain"
                   sizes="20px"
                 />
               </div>
               <span className="text-sm font-headline font-bold text-chalk">
-                {match.teamB.shortName}
+                {match.teamB?.shortName ?? 'TBD'}
               </span>
             </div>
             <p className="text-xs text-chalk-muted font-body mt-0.5">

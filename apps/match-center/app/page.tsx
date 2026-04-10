@@ -12,65 +12,133 @@ import {
   ActionBtn,
   MatchCardSkeleton,
   StatTileSkeleton,
+  cn,
 } from '@cricket/ui'
 import Image from 'next/image'
-import { Trophy, Zap, Users, Star, ArrowRight } from 'lucide-react'
+import { Trophy as TrophyIcon, Zap, Users, Star, ArrowRight } from 'lucide-react'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import { useRef, useState, useEffect } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-// ─── Hero Section ─────────────────────────────────────────────────────────────
 function Hero() {
+  const containerRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  })
+
+  // Transformation for players: they come from sides to center
+  const leftX = useTransform(scrollYProgress, [0, 0.5], ['-35%', '0%'])
+  const rightX = useTransform(scrollYProgress, [0, 0.5], ['35%', '0%'])
+  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0.8])
+  const textScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9])
+  const playerOpacity = useTransform(scrollYProgress, [0, 0.1, 0.5], [0, 1, 1])
+
   return (
-    <section className="relative overflow-hidden min-h-[90vh] flex items-center">
-      {/* Background radial glow */}
-      <div className="absolute inset-0 bg-hero-glow pointer-events-none" />
-      {/* Grid overlay */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(233,195,73,1) 1px, transparent 1px), linear-gradient(90deg, rgba(233,195,73,1) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-        }}
-      />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="max-w-3xl">
-          {/* Season tag */}
-          <div className="inline-flex items-center gap-2 bg-gold/10 border border-gold/20 rounded-sm px-3 py-1.5 mb-6">
-            <span className="live-dot" />
-            <span className="text-gold text-xs font-headline font-bold tracking-widest uppercase">
-              Season 2025 · Live Now
-            </span>
-          </div>
-
-          {/* Heading */}
-          <h1 className="font-headline font-black text-5xl sm:text-7xl leading-[0.9] text-chalk mb-6">
-            WHERE
-            <br />
-            <span className="text-gold-gradient">LEGENDS</span>
-            <br />
-            COLLIDE
-          </h1>
-
-          <p className="font-body text-chalk-muted text-lg max-w-xl mb-10 leading-relaxed">
-            The premier cricket tournament platform. Live scores, real-time stats,
-            and the complete match experience — all in one place.
-          </p>
-
-          <div className="flex flex-wrap items-center gap-4">
-            <ActionBtn href="/match-center" size="lg">
-              View Live Matches
-            </ActionBtn>
-            <ActionBtn href="#fixtures" variant="outline" size="lg">
-              See Fixtures
-            </ActionBtn>
-          </div>
-        </div>
+    <section 
+      ref={containerRef}
+      className="relative overflow-hidden min-h-[110vh] bg-[#050b14] flex flex-col items-center justify-center pt-20"
+    >
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/ground.jpg"
+          alt="Cricket Ground"
+          fill
+          priority
+          className="object-cover opacity-40 mix-blend-luminosity"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#050b14]/80 via-transparent to-[#050b14]" />
       </div>
 
-      {/* Decorative number */}
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 text-[220px] font-headline font-black text-gold/[0.04] leading-none select-none pointer-events-none hidden lg:block">
-        XI
+      <div className="relative z-10 flex flex-col items-center text-center max-w-5xl px-4">
+        {/* Trophy */}
+        <motion.div 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mb-8"
+        >
+          <Image src="/trophy.png" alt="Trophy" width={60} height={60} className="drop-shadow-[0_0_15px_rgba(233,195,73,0.5)]" />
+        </motion.div>
+
+        {/* Small Tagline */}
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="text-gold font-headline font-bold tracking-[0.3em] uppercase text-xs mb-4"
+        >
+          The Ultimate Cricket Experience
+        </motion.p>
+
+        {/* Main Heading */}
+        <motion.h1 
+          style={{ scale: textScale }}
+          className="font-headline font-black text-6xl sm:text-8xl leading-[0.85] text-chalk mb-8 italic uppercase tracking-tighter"
+        >
+          CHAMPION — SPORTS
+          <br />
+          <span className="text-gold-gradient">COACH & ACADEMY</span>
+        </motion.h1>
+
+        {/* Description */}
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="font-body text-chalk-muted text-lg max-w-2xl mb-12 leading-relaxed"
+        >
+          Champion is a stunning platform designed specifically for sports academies, 
+          professional trainers and coaching businesses. With its modern and sleek design, 
+          we offer a unique look that will attract your fans.
+        </motion.p>
+
+        {/* Action Button */}
+        <motion.div
+           initial={{ opacity: 0, scale: 0.9 }}
+           animate={{ opacity: 1, scale: 1 }}
+           transition={{ delay: 0.8 }}
+        >
+          <ActionBtn href="/match-center" size="lg" className="px-12 py-6 text-xl bg-gold hover:bg-gold-light text-ink border-none">
+            EXPLORE DEMOS
+          </ActionBtn>
+        </motion.div>
       </div>
+
+      {/* Players - Animated on scroll */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden h-full w-full">
+        {/* Left Player */}
+        <motion.div 
+          className="absolute bottom-[10%] left-[-2%] w-[35%] h-[50%] z-20"
+          style={{ x: leftX, opacity: playerOpacity }}
+        >
+          <Image 
+            src="/leftplayer.png" 
+            alt="Left Player" 
+            fill 
+            className="object-contain object-bottom"
+            sizes="35vw"
+          />
+        </motion.div>
+
+        {/* Right Player */}
+        <motion.div 
+          className="absolute bottom-[10%] right-[-2%] w-[35%] h-[50%] z-20"
+          style={{ x: rightX, opacity: playerOpacity }}
+        >
+          <Image 
+            src="/rightplayer.png" 
+            alt="Right Player" 
+            fill 
+            className="object-contain object-bottom"
+            sizes="45vw"
+          />
+        </motion.div>
+      </div>
+
+      {/* Bottom atmospheric shadow */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#050b14] to-transparent z-30" />
     </section>
   )
 }
@@ -84,7 +152,7 @@ function TournamentStats() {
         { label: 'Total Teams', value: tournament.totalTeams, icon: <Users className="w-4 h-4" />, highlight: false },
         { label: 'Total Matches', value: tournament.totalMatches, icon: <Zap className="w-4 h-4" />, highlight: false },
         { label: 'Top Scorer', value: tournament.topScorer?.name ?? '—', sublabel: `${tournament.topScorer?.stats.runs ?? 0} runs`, icon: <Star className="w-4 h-4" />, highlight: true },
-        { label: 'Top Wicket Taker', value: tournament.topWicketTaker?.name ?? '—', sublabel: `${tournament.topWicketTaker?.stats.wickets ?? 0} wickets`, icon: <Trophy className="w-4 h-4" />, highlight: true },
+        { label: 'Top Wicket Taker', value: tournament.topWicketTaker?.name ?? '—', sublabel: `${tournament.topWicketTaker?.stats.wickets ?? 0} wickets`, icon: <TrophyIcon className="w-4 h-4" />, highlight: true },
       ]
     : []
 
@@ -143,26 +211,94 @@ function LiveMatchesSection() {
   )
 }
 
-// ─── All Matches Grid ─────────────────────────────────────────────────────────
+// ─── All Matches Carousel ─────────────────────────────────────────────────────────
 function AllMatchesSection() {
   const { data: matches, isLoading } = useMatches()
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [itemsToShow, setItemsToShow] = useState(3)
+
+  // Handle responsiveness for carousel items
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) setItemsToShow(1)
+      else if (window.innerWidth < 1024) setItemsToShow(2)
+      else setItemsToShow(3)
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const displayMatches = matches?.slice(0, 8) ?? []
+  const maxIndex = Math.max(0, displayMatches.length - itemsToShow)
+
+  const next = () => setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1))
+  const prev = () => setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1))
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="font-headline font-bold text-xl text-chalk">All Matches</h2>
-        <ActionBtn href="/match-center" variant="ghost" size="sm">
-          Full Schedule <ArrowRight className="w-3 h-3" />
-        </ActionBtn>
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 overflow-hidden">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h2 className="font-headline font-bold text-2xl text-chalk italic uppercase tracking-tight">Recent Matches</h2>
+          <p className="text-chalk-muted text-xs font-body mt-1">Catch up on the latest action from the tournament</p>
+        </div>
+        
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={prev}
+            className="w-10 h-10 rounded-full border border-ink-border flex items-center justify-center text-chalk-dim hover:border-gold hover:text-gold transition-all bg-ink-card/50"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button 
+            onClick={next}
+            className="w-10 h-10 rounded-full border border-ink-border flex items-center justify-center text-chalk-dim hover:border-gold hover:text-gold transition-all bg-ink-card/50"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {isLoading
-          ? Array.from({ length: 6 }).map((_, i) => <MatchCardSkeleton key={i} />)
-          : matches?.slice(0, 6).map((match) => (
-              <MatchCard key={match._id} match={match} />
+      <div className="relative">
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 3 }).map((_, i) => <MatchCardSkeleton key={i} />)}
+          </div>
+        ) : (
+          <motion.div 
+            className="flex gap-6"
+            animate={{ x: `-${currentIndex * (100 / itemsToShow)}%` }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            style={{ width: `${(displayMatches.length / itemsToShow) * 100}%` }}
+          >
+            {displayMatches.map((match) => (
+              <div 
+                key={match._id} 
+                style={{ width: `${100 / displayMatches.length}%` }}
+                className="px-1"
+              >
+                <MatchCard match={match} />
+              </div>
             ))}
+          </motion.div>
+        )}
       </div>
+
+      {/* Progress dots */}
+      {!isLoading && displayMatches.length > itemsToShow && (
+        <div className="flex justify-center gap-2 mt-8">
+          {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentIndex(i)}
+              className={cn(
+                "h-1.5 transition-all duration-300 rounded-full",
+                currentIndex === i ? "w-8 bg-gold" : "w-1.5 bg-ink-border hover:bg-chalk-dim"
+              )}
+            />
+          ))}
+        </div>
+      )}
     </section>
   )
 }
