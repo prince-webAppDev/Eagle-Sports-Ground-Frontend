@@ -26,6 +26,7 @@ const ADMIN_NAV = [
 ]
 
 function AdminSidebar({ onLogout }: { onLogout: () => void }) {
+  const { user } = useAuth()
   const pathname = usePathname()
 
   return (
@@ -65,15 +66,26 @@ function AdminSidebar({ onLogout }: { onLogout: () => void }) {
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="p-3 border-t border-ink-border">
-        <button
-          onClick={onLogout}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-body font-medium text-chalk-muted hover:text-live hover:bg-live/5 transition-all w-full"
-        >
-          <LogOut className="w-4 h-4" />
-          Logout
-        </button>
+      {/* Footer / User Profile */}
+      <div className="p-4 border-t border-ink-border mt-auto">
+        <div className="flex items-center justify-between gap-3 p-2 rounded-xl bg-ink-surface/50 border border-ink-border">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-8 h-8 rounded-lg bg-gold/10 border border-gold/20 flex items-center justify-center flex-shrink-0 text-gold font-headline font-bold uppercase overflow-hidden">
+              {user?.name?.[0] ?? 'A'}
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-bold text-chalk truncate">{user?.name ?? 'Admin'}</p>
+              <p className="text-[10px] text-chalk-muted truncate lowercase">{user?.username ?? 'admin'}</p>
+            </div>
+          </div>
+          <button
+            onClick={onLogout}
+            title="Sign Out"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-chalk-dim hover:text-live hover:bg-live/10 transition-all flex-shrink-0"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </aside>
   )
