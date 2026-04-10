@@ -14,6 +14,9 @@ export default function MatchesPage() {
                     <h1 className="font-headline font-black text-3xl text-chalk">All Matches</h1>
                     <p className="text-chalk-muted text-sm font-body mt-1">View tournament fixtures</p>
                 </div>
+                <ActionBtn href="/add-match" size="sm">
+                    <PlusCircle className="w-4 h-4 mr-2" /> Schedule Match
+                </ActionBtn>
             </div>
 
             {/* Matches Grid */}

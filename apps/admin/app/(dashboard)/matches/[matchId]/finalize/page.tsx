@@ -44,16 +44,34 @@ export default function FinalizeMatchPage({ params }: { params: { matchId: strin
         return [...(teamAPlayers || []), ...(teamBPlayers || [])]
     }, [teamAPlayers, teamBPlayers])
 
-    const initializeTeamIds = () => {
-        if (match && match.team_a_id && innings[0].team_id === '') {
+    // ─── Initialize Data ───
+    useMemo(() => {
+        if (match && match.status === 'Completed' && match.scorecard) {
+            setInnings(match.scorecard.innings.map(inn => ({
+                team_id: inn.team_id,
+                runs: inn.runs,
+                wickets: inn.wickets,
+                overs: inn.overs
+            })))
+
+            setPerformances(match.scorecard.individual_performances.map(perf => ({
+                player_id: typeof perf.player_id === 'string' ? perf.player_id : perf.player_id?._id,
+                runs_scored: perf.runs_scored,
+                balls_faced: perf.balls_faced,
+                fours: perf.fours,
+                sixes: perf.sixes,
+                wickets_taken: perf.wickets_taken,
+                overs_bowled: perf.overs_bowled,
+                runs_conceded: perf.runs_conceded,
+                was_dismissed: perf.was_dismissed
+            })))
+        } else if (match && innings[0].team_id === '') {
             setInnings([
                 { team_id: match.team_a_id._id, runs: 0, wickets: 0, overs: 0 },
                 { team_id: match.team_b_id._id, runs: 0, wickets: 0, overs: 0 }
             ])
         }
-    }
-
-    if (match && innings[0].team_id === '') initializeTeamIds()
+    }, [match])
 
     // ─── Handlers ───
     const addPerformance = () => {
