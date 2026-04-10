@@ -9,11 +9,11 @@ export { default as StatTile } from './components/StatTile'
 
 // Lib
 export { cn, formatOvers, calcStrikeRate, calcEconomy, formatDate, formatTime, getMatchStatusColor, truncate } from './lib/utils'
-export { api, fetchMatches, fetchLiveMatches, fetchMatchById, fetchUpcomingMatches, fetchTeams, fetchTeamById, fetchAdminTeamById, fetchPlayers, updatePlayer, deletePlayer, fetchVenues, fetchTournament, createTeam, addPlayer, updateScore, createMatch } from './lib/api'
+export { api, fetchMatches, fetchLiveMatches, fetchMatchById, fetchUpcomingMatches, fetchTeams, fetchTeamById, fetchAdminTeamById, fetchPlayers, updatePlayer, deletePlayer, fetchVenues, fetchTournament, createTeam, addPlayer, updateScore, createMatch, finalizeMatch } from './lib/api'
 export type { Team, Player, Innings, BatsmanInnings, BowlerFigures, Match, Venue, Tournament } from './lib/api'
 
 // Hooks
-export { useMatches, useLiveMatches, useMatch, useUpcomingMatches, useTeams, useAdminTeam, usePlayers, useVenues, useTournament, useCreateTeam, useUpdateTeam, useDeleteTeam, useAddPlayer, useUpdatePlayer, useDeletePlayer, useUpdateScore, useCreateMatch } from './hooks/useQueries'
+export { useMatches, useLiveMatches, useMatch, useUpcomingMatches, useTeams, useAdminTeam, usePlayers, useVenues, useTournament, useCreateTeam, useUpdateTeam, useDeleteTeam, useAddPlayer, useUpdatePlayer, useDeletePlayer, useUpdateScore, useCreateMatch, useFinalizeMatch } from './hooks/useQueries'
 
 // Context
 export { QueryProvider } from './context/QueryProvider'

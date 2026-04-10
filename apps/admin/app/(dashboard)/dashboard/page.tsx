@@ -10,7 +10,9 @@ export default function AdminDashboard() {
   const { data: teams, isLoading: teamsLoading } = useTeams()
   const { data: tournament } = useTournament()
 
-  const completedMatches = matches?.filter((m) => m.status === 'Completed') ?? []
+  const completedMatches = (matches ?? [])
+    .filter((m) => m.status === 'Completed')
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   return (
     <div className="space-y-10">
@@ -25,8 +27,8 @@ export default function AdminDashboard() {
           </h1>
         </div>
         <div className="flex gap-3">
-          <ActionBtn href="/add-team" variant="outline" size="sm">
-            <PlusCircle className="w-3.5 h-3.5" /> Add Team
+          <ActionBtn href="/teams" variant="outline" size="sm">
+            <Users className="w-3.5 h-3.5" /> Manage Teams
           </ActionBtn>
         </div>
       </div>
@@ -78,6 +80,101 @@ export default function AdminDashboard() {
         </div>
       </section>
 
+      {/* Last Match Highlights */}
+      {completedMatches.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-headline font-bold text-lg text-chalk">Last Match Highlights</h2>
+            <p className="text-xs text-chalk-muted font-body">Match finished on {new Date(completedMatches[0].date).toLocaleDateString()}</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Batters */}
+            <div className="bg-ink-card border border-ink-border rounded-xl overflow-hidden">
+              <div className="bg-ink-surface px-4 py-2 border-b border-ink-border">
+                <span className="text-[10px] font-bold text-chalk-dim uppercase tracking-wider">Top Batters</span>
+              </div>
+              <div className="divide-y divide-ink-border/50">
+                {completedMatches[0].scorecard?.individual_performances
+                  ?.sort((a: any, b: any) => (b.runs_scored || 0) - (a.runs_scored || 0))
+                  .slice(0, 3)
+                  .map((perf: any) => (
+                    <div key={perf.player_id?._id} className="px-4 py-3 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded bg-ink-surface flex items-center justify-center border border-ink-border">
+                          <Activity className="w-4 h-4 text-gold/40" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-chalk">{perf.player_id?.name || 'Unknown'}</p>
+                          <p className="text-[10px] text-chalk-muted font-medium uppercase tracking-tighter">
+                            {perf.runs_scored} Runs off {perf.balls_faced} Balls
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <p className="text-sm font-black text-gold">{perf.runs_scored}</p>
+                          <p className="text-[9px] text-chalk-dim font-bold uppercase">Runs</p>
+                        </div>
+                        <div className="text-right w-12 border-l border-ink-border/50 pl-3">
+                          <p className="text-sm font-bold text-chalk">
+                            {perf.balls_faced > 0 ? ((perf.runs_scored / perf.balls_faced) * 100).toFixed(1) : '0.0'}
+                          </p>
+                          <p className="text-[9px] text-chalk-dim font-bold uppercase">SR</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                {(!completedMatches[0].scorecard?.individual_performances || completedMatches[0].scorecard.individual_performances.length === 0) && (
+                  <p className="p-4 text-xs text-chalk-muted text-center font-body">No performance data entered.</p>
+                )}
+              </div>
+            </div>
+
+            {/* Bowlers */}
+            <div className="bg-ink-card border border-ink-border rounded-xl overflow-hidden">
+              <div className="bg-ink-surface px-4 py-2 border-b border-ink-border">
+                <span className="text-[10px] font-bold text-chalk-dim uppercase tracking-wider">Top Bowlers</span>
+              </div>
+              <div className="divide-y divide-ink-border/50">
+                {completedMatches[0].scorecard?.individual_performances
+                  ?.filter((p: any) => p.overs_bowled > 0)
+                  ?.sort((a: any, b: any) => (b.wickets_taken || 0) - (a.wickets_taken || 0))
+                  .slice(0, 3)
+                  .map((perf: any) => (
+                    <div key={perf.player_id?._id} className="px-4 py-3 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded bg-ink-surface flex items-center justify-center border border-ink-border">
+                          <Zap className="w-4 h-4 text-live/40" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-chalk">{perf.player_id?.name || 'Unknown'}</p>
+                          <p className="text-[10px] text-chalk-muted font-medium uppercase tracking-tighter">
+                            {perf.wickets_taken} Wickets in {perf.overs_bowled} Overs
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <p className="text-sm font-black text-live">{perf.wickets_taken}</p>
+                          <p className="text-[9px] text-chalk-dim font-bold uppercase">Wkts</p>
+                        </div>
+                        <div className="text-right w-12 border-l border-ink-border/50 pl-3">
+                          <p className="text-sm font-bold text-chalk">{perf.overs_bowled}</p>
+                          <p className="text-[9px] text-chalk-dim font-bold uppercase">Overs</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                {(!completedMatches[0].scorecard?.individual_performances?.some((p: any) => p.overs_bowled > 0)) && (
+                  <p className="p-4 text-xs text-chalk-muted text-center font-body">No bowling data available.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Teams list */}
       <section>
         <div className="flex items-center justify-between mb-4">
@@ -85,9 +182,6 @@ export default function AdminDashboard() {
           <div className="flex gap-2">
             <ActionBtn href="/teams" variant="ghost" size="sm">
               View All
-            </ActionBtn>
-            <ActionBtn href="/add-team" variant="outline" size="sm">
-              <PlusCircle className="w-3.5 h-3.5" /> Add Team
             </ActionBtn>
           </div>
         </div>

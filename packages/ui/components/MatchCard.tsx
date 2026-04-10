@@ -97,63 +97,12 @@ function TeamBlock({
 }
 
 export default function MatchCard({ match, compact = false, isAdmin = false }: MatchCardProps) {
-  const [isEditing, setIsEditing] = useState(false)
-  const { mutateAsync: updateScore, isPending } = useUpdateScore()
+  const isEditing = false // kept for conditional rendering logic below for now
 
   const inningsA = match.innings?.[0]
   const inningsB = match.innings?.[1]
-  const teamA = match.team_a_id || match.teamA;
-  const teamB = match.team_b_id || match.teamB;
-
-  // Form State
-  const [runsA, setRunsA] = useState(inningsA?.runs?.toString() || '')
-  const [wicketsA, setWicketsA] = useState(inningsA?.wickets?.toString() || '')
-  const [oversA, setOversA] = useState(inningsA?.overs?.toString() || '')
-
-  const [runsB, setRunsB] = useState(inningsB?.runs?.toString() || '')
-  const [wicketsB, setWicketsB] = useState(inningsB?.wickets?.toString() || '')
-  const [oversB, setOversB] = useState(inningsB?.overs?.toString() || '')
-
-  const [result, setResult] = useState(match.result || '')
-
-  const handleUpdate = async (e: MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    try {
-      // Update Innings A
-      await updateScore({
-        matchId: match._id,
-        inningsIndex: 0,
-        runs: Number(runsA),
-        wickets: Number(wicketsA),
-        overs: Number(oversA),
-        result: result
-      })
-
-      // Update Innings B
-      await updateScore({
-        matchId: match._id,
-        inningsIndex: 1,
-        runs: Number(runsB),
-        wickets: Number(wicketsB),
-        overs: Number(oversB),
-        result: result,
-        status: 'Completed'
-      })
-
-      setIsEditing(false)
-    } catch (err) {
-      console.error(err)
-      alert('Failed to update score')
-    }
-  }
-
-  const toggleEdit = (e: MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setIsEditing(!isEditing)
-  }
+  const teamA = match.team_a_id
+  const teamB = match.team_b_id
 
   return (
     <div className="relative group/card">
@@ -176,13 +125,14 @@ export default function MatchCard({ match, compact = false, isAdmin = false }: M
             </div>
             <div className="flex items-center gap-2">
               <StatusBadge status={match.status} date={match.date} />
-              {isAdmin && !isEditing && (
-                <button
-                  onClick={toggleEdit}
-                  className="p-1 hover:bg-gold/10 rounded text-gold transition-colors"
+              {isAdmin && match.status !== 'Completed' && (
+                <Link
+                  href={`/matches/${match._id}/finalize`}
+                  className="px-2 py-1 bg-gold/10 border border-gold/20 rounded text-[10px] font-bold text-gold uppercase hover:bg-gold/20 transition-colors"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <Edit2 className="w-3.5 h-3.5" />
-                </button>
+                  Enter Scorecard
+                </Link>
               )}
             </div>
           </div>
@@ -224,74 +174,7 @@ export default function MatchCard({ match, compact = false, isAdmin = false }: M
                 </div>
               )}
             </>
-          ) : (
-            <div className="space-y-4 py-2" onClick={e => e.stopPropagation()}>
-              <div className="grid grid-cols-2 gap-4">
-                {/* Team A Edit */}
-                <div className="space-y-2">
-                  <p className="text-[10px] font-bold text-gold uppercase tracking-wider">{teamA?.short_name || 'T1'}</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="number" value={runsA} onChange={e => setRunsA(e.target.value)}
-                      placeholder="Runs" className="bg-ink-surface border border-ink-border rounded px-2 py-1 text-xs text-chalk w-full"
-                    />
-                    <input
-                      type="number" value={wicketsA} onChange={e => setWicketsA(e.target.value)}
-                      placeholder="Wkt" className="bg-ink-surface border border-ink-border rounded px-2 py-1 text-xs text-chalk w-full"
-                    />
-                  </div>
-                  <input
-                    type="number" step="0.1" value={oversA} onChange={e => setOversA(e.target.value)}
-                    placeholder="Overs" className="bg-ink-surface border border-ink-border rounded px-2 py-1 text-xs text-chalk w-full"
-                  />
-                </div>
-
-                {/* Team B Edit */}
-                <div className="space-y-2 text-right">
-                  <p className="text-[10px] font-bold text-chalk-muted uppercase tracking-wider">{teamB?.short_name || 'T2'}</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="number" value={runsB} onChange={e => setRunsB(e.target.value)}
-                      placeholder="Runs" className="bg-ink-surface border border-ink-border rounded px-2 py-1 text-xs text-chalk w-full text-right"
-                    />
-                    <input
-                      type="number" value={wicketsB} onChange={e => setWicketsB(e.target.value)}
-                      placeholder="Wkt" className="bg-ink-surface border border-ink-border rounded px-2 py-1 text-xs text-chalk w-full text-right"
-                    />
-                  </div>
-                  <input
-                    type="number" step="0.1" value={oversB} onChange={e => setOversB(e.target.value)}
-                    placeholder="Overs" className="bg-ink-surface border border-ink-border rounded px-2 py-1 text-xs text-chalk w-full text-right"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1.5 pt-2 border-t border-ink-border">
-                <label className="text-[9px] font-bold text-chalk-muted uppercase tracking-widest">Match Result</label>
-                <input
-                  type="text" value={result} onChange={e => setResult(e.target.value)}
-                  placeholder="e.g. MI won by 5 wickets"
-                  className="w-full bg-ink-surface border border-ink-border rounded px-2 py-2 text-xs text-gold font-semibold"
-                />
-              </div>
-
-              <div className="flex gap-2">
-                <button
-                  onClick={handleUpdate}
-                  disabled={isPending}
-                  className="flex-1 bg-gold text-ink font-bold text-xs py-2 rounded flex items-center justify-center gap-1.5 hover:bg-gold/90 transition-colors"
-                >
-                  <Save className="w-3 h-3" /> {isPending ? 'Saving...' : 'Save'}
-                </button>
-                <button
-                  onClick={toggleEdit}
-                  className="px-3 bg-ink-surface border border-ink-border text-chalk-muted rounded hover:text-chalk transition-colors"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            </div>
-          )}
+          ) : null}
         </article>
       </Link>
     </div>

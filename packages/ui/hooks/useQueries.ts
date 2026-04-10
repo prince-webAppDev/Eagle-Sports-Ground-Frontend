@@ -17,6 +17,7 @@ import {
   addPlayer,
   updateScore,
   createMatch,
+  finalizeMatch,
 } from '../lib/api'
 
 // ─── Public hooks ────────────────────────────────────────────────────────────
@@ -185,6 +186,20 @@ export function useCreateMatch() {
     mutationFn: createMatch,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['matches'] })
+    },
+  })
+}
+
+export function useFinalizeMatch() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ matchId, ...payload }: { matchId: string, innings: any[], individual_performances: any[] }) =>
+      finalizeMatch(matchId, payload),
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ['match', vars.matchId] })
+      qc.invalidateQueries({ queryKey: ['matches'] })
+      qc.invalidateQueries({ queryKey: ['players'] })
+      qc.invalidateQueries({ queryKey: ['teams'] })
     },
   })
 }

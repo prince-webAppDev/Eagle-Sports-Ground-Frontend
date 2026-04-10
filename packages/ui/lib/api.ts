@@ -82,21 +82,50 @@ export interface BowlerFigures {
   economy: number
 }
 
+export interface Performance {
+  player_id: Player
+  runs_scored: number
+  balls_faced: number
+  fours: number
+  sixes: number
+  wickets_taken: number
+  overs_bowled: number
+  runs_conceded: number
+  was_dismissed: boolean
+}
+
+export interface MatchSummary {
+  total_4s: number
+  total_6s: number
+  highest_scorer: Player | string | null
+  best_bowler: Player | string | null
+}
+
+export interface Scorecard {
+  innings: {
+    team_id: string
+    runs: number
+    wickets: number
+    overs: number
+  }[]
+  summary: MatchSummary
+  individual_performances: Performance[]
+}
+
 export interface Match {
   _id: string
-  matchNumber: number
-  venue: string
+  matchNumber?: number
+  ground: string
+  venue?: string // Keep for legacy, but use ground primarily
   date: string
   status: 'Upcoming' | 'live' | 'Completed'
   team_a_id: Team
   team_b_id: Team
   teamA?: Team
   teamB?: Team
-  tossWinner?: string
-  tossDecision?: 'bat' | 'bowl'
-  innings: Innings[]
+  innings?: Innings[]
+  scorecard?: Scorecard
   result?: string
-  manOfTheMatch?: Player
   createdAt?: string
   updatedAt?: string
 }
@@ -185,9 +214,13 @@ export const updateScore = (matchId: string, payload: {
 }) => api.patch(`/api/matches/${matchId}/score`, payload)
 
 export const createMatch = (payload: {
-  teamA: string
-  teamB: string
-  venue: string
+  team_a_id: string
+  team_b_id: string
   date: string
-  matchNumber: number
+  ground: string
 }) => api.post('/api/matches', payload)
+
+export const finalizeMatch = (matchId: string, payload: {
+  innings: any[]
+  individual_performances: any[]
+}) => api.patch(`/api/matches/${matchId}/finalize`, payload)
