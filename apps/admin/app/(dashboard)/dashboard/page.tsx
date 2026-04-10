@@ -10,8 +10,7 @@ export default function AdminDashboard() {
   const { data: teams, isLoading: teamsLoading } = useTeams()
   const { data: tournament } = useTournament()
 
-  const liveMatches = matches?.filter((m) => m.status === 'live') ?? []
-  const completedMatches = matches?.filter((m) => m.status === 'completed') ?? []
+  const completedMatches = matches?.filter((m) => m.status === 'Completed') ?? []
 
   return (
     <div className="space-y-10">
@@ -28,9 +27,6 @@ export default function AdminDashboard() {
         <div className="flex gap-3">
           <ActionBtn href="/add-team" variant="outline" size="sm">
             <PlusCircle className="w-3.5 h-3.5" /> Add Team
-          </ActionBtn>
-          <ActionBtn href="/update-score" size="sm">
-            <RefreshCw className="w-3.5 h-3.5" /> Update Score
           </ActionBtn>
         </div>
       </div>
@@ -53,12 +49,6 @@ export default function AdminDashboard() {
               highlight: false,
             },
             {
-              label: 'Live Now',
-              value: liveMatches.length,
-              icon: <Activity className="w-4 h-4" />,
-              highlight: liveMatches.length > 0,
-            },
-            {
               label: 'Completed',
               value: completedMatches.length,
               icon: <Zap className="w-4 h-4" />,
@@ -69,20 +59,6 @@ export default function AdminDashboard() {
           ))}
       </div>
 
-      {/* Live Matches */}
-      {liveMatches.length > 0 && (
-        <section>
-          <div className="flex items-center gap-2 mb-4">
-            <span className="live-dot" />
-            <h2 className="font-headline font-bold text-lg text-chalk">Live Matches</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {liveMatches.map((m) => (
-              <MatchCard key={m._id} match={m} isAdmin={true} />
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* Recent Matches */}
       <section>

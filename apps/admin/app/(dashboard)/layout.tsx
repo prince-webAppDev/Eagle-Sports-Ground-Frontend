@@ -21,11 +21,8 @@ const ADMIN_NAV = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Add Team', href: '/add-team', icon: PlusCircle },
   { label: 'Add Player', href: '/add-player', icon: Users },
-  { label: 'Schedule Match', href: '/create-match', icon: Trophy },
-  { label: 'Update Score', href: '/update-score', icon: RefreshCw },
   { label: 'Teams', href: '/teams', icon: Users },
   { label: 'Matches', href: '/matches', icon: Trophy },
-  { label: 'Live Monitor', href: '/live', icon: Activity },
 ]
 
 function AdminSidebar({ onLogout }: { onLogout: () => void }) {

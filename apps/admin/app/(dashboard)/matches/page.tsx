@@ -12,11 +12,8 @@ export default function MatchesPage() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <h1 className="font-headline font-black text-3xl text-chalk">All Matches</h1>
-                    <p className="text-chalk-muted text-sm font-body mt-1">Manage and view all tournament fixtures</p>
+                    <p className="text-chalk-muted text-sm font-body mt-1">View tournament fixtures</p>
                 </div>
-                <ActionBtn href="/create-match" size="md">
-                    <PlusCircle className="w-4 h-4" /> Schedule New Match
-                </ActionBtn>
             </div>
 
             {/* Matches Grid */}
@@ -28,11 +25,6 @@ export default function MatchesPage() {
                             <div className="col-span-full py-20 text-center bg-ink-surface border border-ink-border rounded-2xl">
                                 <Trophy className="w-12 h-12 text-chalk-dim mx-auto mb-4 opacity-20" />
                                 <p className="text-chalk-muted font-body">No matches scheduled yet.</p>
-                                <div className="mt-6">
-                                    <ActionBtn href="/create-match" variant="outline" size="sm">
-                                        Create First Match
-                                    </ActionBtn>
-                                </div>
                             </div>
                         ) : (
                             [...(matches ?? [])]
