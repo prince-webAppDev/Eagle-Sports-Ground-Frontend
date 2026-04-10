@@ -48,32 +48,68 @@ export default function FixtureList({ matches }: FixtureListProps) {
             <div className="flex items-center gap-2">
               <div className="relative w-5 h-5 flex-shrink-0">
                 <Image
-                  src={match.teamA?.logo || '/team-placeholder.png'}
-                  alt={match.teamA?.shortName ?? 'Team A'}
+                  src={
+                    match.teamA?.logo_url || 
+                    match.teamA?.logo || 
+                    match.team_a_id?.logo_url || 
+                    match.team_a_id?.logo || 
+                    '/team-placeholder.png'
+                  }
+                  alt={
+                    match.teamA?.shortName || 
+                    match.teamA?.short_name || 
+                    match.team_a_id?.shortName || 
+                    match.team_a_id?.short_name || 
+                    'Team A'
+                  }
                   fill
                   className="object-contain"
                   sizes="20px"
                 />
               </div>
               <span className="text-sm font-headline font-bold text-chalk">
-                {match.teamA?.shortName ?? 'TBD'}
+                {
+                  match.teamA?.shortName || 
+                  match.teamA?.short_name || 
+                  match.team_a_id?.shortName || 
+                  match.team_a_id?.short_name || 
+                  'TBD'
+                }
               </span>
               <span className="text-chalk-dim text-xs">vs</span>
               <div className="relative w-5 h-5 flex-shrink-0">
                 <Image
-                  src={match.teamB?.logo || '/team-placeholder.png'}
-                  alt={match.teamB?.shortName ?? 'Team B'}
+                  src={
+                    match.teamB?.logo_url || 
+                    match.teamB?.logo || 
+                    match.team_b_id?.logo_url || 
+                    match.team_b_id?.logo || 
+                    '/team-placeholder.png'
+                  }
+                  alt={
+                    match.teamB?.shortName || 
+                    match.teamB?.short_name || 
+                    match.team_b_id?.shortName || 
+                    match.team_b_id?.short_name || 
+                    'Team B'
+                  }
                   fill
                   className="object-contain"
                   sizes="20px"
                 />
               </div>
               <span className="text-sm font-headline font-bold text-chalk">
-                {match.teamB?.shortName ?? 'TBD'}
+                {
+                  match.teamB?.shortName || 
+                  match.teamB?.short_name || 
+                  match.team_b_id?.shortName || 
+                  match.team_b_id?.short_name || 
+                  'TBD'
+                }
               </span>
             </div>
             <p className="text-xs text-chalk-muted font-body mt-0.5">
-              {formatDate(match.date)} · {formatTime(match.date)} · {match.venue}
+              {formatDate(match.date)} · {match.startTime || formatTime(match.date)} · {match.venue || match.ground}
             </p>
           </div>
 

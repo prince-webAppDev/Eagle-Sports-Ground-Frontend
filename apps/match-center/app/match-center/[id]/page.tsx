@@ -1,6 +1,6 @@
 'use client'
 
-import { use } from 'react'
+import { useState } from 'react'
 import {
   useMatch,
   ScorecardSkeleton,
@@ -120,9 +120,9 @@ function InningsChart({ innings }: { innings: Innings[] }) {
   if (!innings?.length) return null
 
   const data = innings.map((inn) => ({
-    name: inn.team.shortName,
-    runs: inn.runs,
-    wickets: inn.wickets,
+    name: inn.team?.shortName ?? 'TBD',
+    runs: inn.runs ?? 0,
+    wickets: inn.wickets ?? 0,
   }))
 
   return (
@@ -173,15 +173,15 @@ function InningsPanel({ innings, label }: { innings: Innings; label: string }) {
         <div className="flex items-center gap-3">
           <div className="relative w-10 h-10">
             <Image
-              src={innings.team.logo || '/team-placeholder.png'}
-              alt={innings.team.name}
+              src={innings.team?.logo || '/team-placeholder.png'}
+              alt={innings.team?.name ?? 'Team'}
               fill
               className="object-contain"
               sizes="40px"
             />
           </div>
           <div>
-            <p className="font-headline font-bold text-chalk">{innings.team.name}</p>
+            <p className="font-headline font-bold text-chalk">{innings.team?.name ?? 'TBD'}</p>
             <p className="text-xs text-chalk-muted font-body">{label}</p>
           </div>
         </div>
@@ -222,9 +222,9 @@ function InningsPanel({ innings, label }: { innings: Innings; label: string }) {
 export default function MatchDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }) {
-  const { id } = use(params)
+  const { id } = params
   const { data: match, isLoading, isError } = useMatch(id)
 
   if (isLoading) {
@@ -277,7 +277,7 @@ export default function MatchDetailPage({
               <MapPin className="w-3 h-3" /> {match.venue}
             </span>
             <span className="flex items-center gap-1.5">
-              <Calendar className="w-3 h-3" /> {formatDate(match.date)} · {formatTime(match.date)}
+              <Calendar className="w-3 h-3" /> {formatDate(match.date)} · {match.startTime || formatTime(match.date)}
             </span>
             {match.tossWinner && (
               <span className="text-gold">
@@ -292,8 +292,8 @@ export default function MatchDetailPage({
             <div className="flex flex-col items-center sm:flex-row sm:items-center gap-3 sm:gap-4">
               <div className="relative w-16 h-16 sm:w-20 sm:h-20 img-hover-color">
                 <Image
-                  src={match.teamA.logo || '/team-placeholder.png'}
-                  alt={match.teamA.name}
+                  src={match.teamA?.logo || '/team-placeholder.png'}
+                  alt={match.teamA?.name ?? 'Team A'}
                   fill
                   className="object-contain"
                   sizes="80px"
@@ -301,9 +301,9 @@ export default function MatchDetailPage({
               </div>
               <div className="text-center sm:text-left">
                 <p className="font-headline font-black text-chalk text-lg sm:text-xl">
-                  {match.teamA.shortName}
+                  {match.teamA?.shortName ?? 'TBD'}
                 </p>
-                <p className="text-chalk-dim text-xs font-body hidden sm:block">{match.teamA.name}</p>
+                <p className="text-chalk-dim text-xs font-body hidden sm:block">{match.teamA?.name ?? 'Team A'}</p>
                 {match.innings?.[0] && (
                   <p className="font-headline font-black text-2xl sm:text-3xl text-gold mt-1">
                     {match.innings[0].runs}/{match.innings[0].wickets}
@@ -327,8 +327,8 @@ export default function MatchDetailPage({
             <div className="flex flex-col items-center sm:flex-row-reverse sm:items-center gap-3 sm:gap-4">
               <div className="relative w-16 h-16 sm:w-20 sm:h-20 img-hover-color">
                 <Image
-                  src={match.teamB.logo || '/team-placeholder.png'}
-                  alt={match.teamB.name}
+                  src={match.teamB?.logo || '/team-placeholder.png'}
+                  alt={match.teamB?.name ?? 'Team B'}
                   fill
                   className="object-contain"
                   sizes="80px"
@@ -336,9 +336,9 @@ export default function MatchDetailPage({
               </div>
               <div className="text-center sm:text-right">
                 <p className="font-headline font-black text-chalk text-lg sm:text-xl">
-                  {match.teamB.shortName}
+                  {match.teamB?.shortName ?? 'TBD'}
                 </p>
-                <p className="text-chalk-dim text-xs font-body hidden sm:block">{match.teamB.name}</p>
+                <p className="text-chalk-dim text-xs font-body hidden sm:block">{match.teamB?.name ?? 'Team B'}</p>
                 {match.innings?.[1] && (
                   <p className="font-headline font-black text-2xl sm:text-3xl text-gold mt-1">
                     {match.innings[1].runs}/{match.innings[1].wickets}

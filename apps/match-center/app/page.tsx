@@ -176,40 +176,7 @@ function TournamentStats() {
   )
 }
 
-// ─── Live Matches Section ─────────────────────────────────────────────────────
-function LiveMatchesSection() {
-  const { data: liveMatches, isLoading } = useLiveMatches()
 
-  if (!isLoading && (!liveMatches || liveMatches.length === 0)) return null
-
-  return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <span className="live-dot" />
-          <h2 className="font-headline font-bold text-xl text-chalk">Live Matches</h2>
-        </div>
-        <ActionBtn href="/match-center?status=live" variant="ghost" size="sm">
-          View All <ArrowRight className="w-3 h-3" />
-        </ActionBtn>
-      </div>
-
-      <div className="scroll-x flex gap-4 pb-4">
-        {isLoading
-          ? Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="flex-shrink-0 w-72">
-                <MatchCardSkeleton />
-              </div>
-            ))
-          : liveMatches!.map((match) => (
-              <div key={match._id} className="flex-shrink-0 w-72 snap-start">
-                <MatchCard match={match} />
-              </div>
-            ))}
-      </div>
-    </section>
-  )
-}
 
 // ─── All Matches Carousel ─────────────────────────────────────────────────────────
 function AllMatchesSection() {
@@ -303,14 +270,19 @@ function AllMatchesSection() {
   )
 }
 
-// ─── Upcoming Fixtures ────────────────────────────────────────────────────────
-function UpcomingFixtures() {
+// ─── Upcoming Matches ────────────────────────────────────────────────────────
+function UpcomingMatchesSection() {
   const { data: upcoming, isLoading } = useUpcomingMatches()
 
+  // Sort by date: closest to today first
+  const sortedMatches = upcoming 
+    ? [...upcoming].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    : []
+
   return (
-    <section id="fixtures" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+    <section id="upcoming" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="font-headline font-bold text-xl text-chalk">Upcoming Fixtures</h2>
+        <h2 className="font-headline font-bold text-xl text-chalk">Upcoming Matches</h2>
       </div>
 
       <div className="bg-ink-surface border border-ink-border rounded-xl overflow-hidden">
@@ -321,7 +293,7 @@ function UpcomingFixtures() {
             ))}
           </div>
         ) : (
-          <FixtureList matches={upcoming ?? []} />
+          <FixtureList matches={sortedMatches} />
         )}
       </div>
     </section>
@@ -376,9 +348,8 @@ export default function HomePage() {
     <>
       <Hero />
       <TournamentStats />
-      <LiveMatchesSection />
       <AllMatchesSection />
-      <UpcomingFixtures />
+      <UpcomingMatchesSection />
       <FeaturedVenues />
     </>
   )
