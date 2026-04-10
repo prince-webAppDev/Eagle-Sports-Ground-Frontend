@@ -18,6 +18,8 @@ export interface Team {
   logo_url?: string
   city?: string
   players?: Player[]
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface Player {
@@ -95,6 +97,8 @@ export interface Match {
   innings: Innings[]
   result?: string
   manOfTheMatch?: Player
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface Venue {

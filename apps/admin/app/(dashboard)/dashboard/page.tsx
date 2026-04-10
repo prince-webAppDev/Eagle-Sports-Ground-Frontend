@@ -84,58 +84,74 @@ export default function AdminDashboard() {
         </section>
       )}
 
-      {/* All matches table */}
+      {/* Recent Matches */}
       <section>
-        <h2 className="font-headline font-bold text-lg text-chalk mb-4">All Matches</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-headline font-bold text-lg text-chalk">Recent Matches</h2>
+          <ActionBtn href="/matches" variant="ghost" size="sm">
+            View All
+          </ActionBtn>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {matchesLoading
-            ? Array.from({ length: 6 }).map((_, i) => <MatchCardSkeleton key={i} />)
-            : matches?.map((m) => <MatchCard key={m._id} match={m} isAdmin={true} />)}
+            ? Array.from({ length: 3 }).map((_, i) => <MatchCardSkeleton key={i} />)
+            : [...(matches ?? [])]
+              .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
+              .slice(0, 3)
+              .map((m) => <MatchCard key={m._id} match={m} isAdmin={true} />)}
         </div>
       </section>
 
       {/* Teams list */}
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-headline font-bold text-lg text-chalk">Registered Teams</h2>
-          <ActionBtn href="/add-team" variant="ghost" size="sm">
-            <PlusCircle className="w-3.5 h-3.5" /> Add Team
-          </ActionBtn>
+          <h2 className="font-headline font-bold text-lg text-chalk">Recently Added Teams</h2>
+          <div className="flex gap-2">
+            <ActionBtn href="/teams" variant="ghost" size="sm">
+              View All
+            </ActionBtn>
+            <ActionBtn href="/add-team" variant="outline" size="sm">
+              <PlusCircle className="w-3.5 h-3.5" /> Add Team
+            </ActionBtn>
+          </div>
         </div>
         <div className="bg-ink-surface border border-ink-border rounded-xl divide-y divide-ink-border overflow-hidden">
           {teamsLoading ? (
             <div className="p-6 space-y-3">
-              {Array.from({ length: 4 }).map((_, i) => (
+              {Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="h-10 skeleton rounded-md" />
               ))}
             </div>
           ) : teams?.length === 0 ? (
             <p className="text-chalk-muted text-sm font-body p-6 text-center">No teams added yet.</p>
           ) : (
-            teams?.map((team) => (
-              <div key={team._id} className="flex items-center gap-4 px-4 py-3 hover:bg-ink-card/40 transition-colors">
-                <div className="w-10 h-10 rounded-full bg-ink-card flex items-center justify-center flex-shrink-0 border border-ink-border overflow-hidden">
-                  {team.logo_url ? (
-                    <img src={team.logo_url} alt={team.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-xs font-headline font-bold text-gold">
-                      {(team.short_name || team.shortName)?.slice(0, 2)}
-                    </span>
-                  )}
+            [...(teams ?? [])]
+              .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
+              .slice(0, 3)
+              .map((team) => (
+                <div key={team._id} className="flex items-center gap-4 px-4 py-3 hover:bg-ink-card/40 transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-ink-card flex items-center justify-center flex-shrink-0 border border-ink-border overflow-hidden">
+                    {team.logo_url ? (
+                      <img src={team.logo_url} alt={team.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-xs font-headline font-bold text-gold">
+                        {(team.short_name || team.shortName)?.slice(0, 2)}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-body font-semibold text-chalk text-sm truncate">{team.name}</p>
+                    <p className="text-xs text-chalk-muted">{team.city} · {team.players?.length ?? 0} players</p>
+                  </div>
+                  <ActionBtn
+                    href={`/teams/${team._id}`}
+                    variant="ghost"
+                    size="sm"
+                  >
+                    Manage
+                  </ActionBtn>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-body font-semibold text-chalk text-sm truncate">{team.name}</p>
-                  <p className="text-xs text-chalk-muted">{team.city} · {team.players?.length ?? 0} players</p>
-                </div>
-                <ActionBtn
-                  href={`/teams/${team._id}`}
-                  variant="ghost"
-                  size="sm"
-                >
-                  Manage
-                </ActionBtn>
-              </div>
-            ))
+              ))
           )}
         </div>
       </section>
