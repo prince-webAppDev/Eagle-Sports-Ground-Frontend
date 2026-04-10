@@ -3,10 +3,10 @@ import './globals.css'
 import { QueryProvider, AuthProvider, Navbar } from '@cricket/ui'
 
 export const metadata: Metadata = {
-  title: 'Cricket Elite — Where Legends Collide',
+  title: 'Eagle Ground — Where Legends Collide',
   description: 'Premium cricket tournament management platform. Live scores, fixtures, stats.',
   openGraph: {
-    title: 'Cricket Elite',
+    title: 'Eagle Ground',
     description: 'Where Legends Collide',
   },
 }
@@ -30,7 +30,7 @@ export default function RootLayout({
               {children}
             </main>
             <footer className="border-t border-ink-border mt-20 py-10 text-center text-chalk-dim text-sm font-body">
-              <p className="text-chalk-muted font-headline font-bold text-lg mb-1">CRICKET ELITE</p>
+              <p className="text-chalk-muted font-headline font-bold text-lg mb-1 uppercase tracking-wider">EAGLE <span className="text-gold">GROUND</span></p>
               <p>© {new Date().getFullYear()} All rights reserved. Where Legends Collide.</p>
             </footer>
           </AuthProvider>

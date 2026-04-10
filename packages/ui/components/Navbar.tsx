@@ -3,10 +3,11 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Menu, X, Shield } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import ActionBtn from './ActionBtn'
 import { cn } from '../lib/utils'
+import Image from 'next/image'
 
 const NAV_LINKS = [
     { label: 'Home', href: '/' },
@@ -25,12 +26,18 @@ export default function Navbar() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 items-center justify-between">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2 group">
-                        <div className="w-8 h-8 bg-gold-gradient rounded-sm flex items-center justify-center">
-                            <Shield className="w-4 h-4 text-ink" />
+                    <Link href="/" className="flex items-center gap-3 group">
+                        <div className="relative w-12 h-12 flex-shrink-0">
+                            <Image 
+                                src="/logo.png" 
+                                alt="Eagle Ground Logo" 
+                                fill 
+                                className="object-contain grayscale brightness-0 invert"
+                                sizes="48px"
+                            />
                         </div>
-                        <span className="font-headline font-bold text-lg text-chalk tracking-tight">
-                            CRICKET<span className="text-gold">ELITE</span>
+                        <span className="font-headline font-bold text-xl text-chalk tracking-tight uppercase">
+                            EAGLE<span className="text-gold">GROUND</span>
                         </span>
                     </Link>
 
@@ -54,7 +61,7 @@ export default function Navbar() {
 
                     {/* Auth */}
                     <div className="hidden md:flex items-center gap-3">
-                        {user ? (
+                        {user && (
                             <>
                                 <Link
                                     href="/admin/dashboard"
@@ -69,10 +76,6 @@ export default function Navbar() {
                                     Logout
                                 </button>
                             </>
-                        ) : (
-                            <ActionBtn href="/admin" size="sm">
-                                Admin Login
-                            </ActionBtn>
                         )}
                     </div>
 
@@ -104,11 +107,7 @@ export default function Navbar() {
                                 {link.label}
                             </Link>
                         ))}
-                        {!user && (
-                            <ActionBtn href="/admin" size="sm" onClick={() => setOpen(false)}>
-                                Admin Login
-                            </ActionBtn>
-                        )}
+
                     </nav>
                 </div>
             )}

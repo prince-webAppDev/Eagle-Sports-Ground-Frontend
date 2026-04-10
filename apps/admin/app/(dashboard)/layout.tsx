@@ -12,10 +12,10 @@ import {
   PlusCircle,
   RefreshCw,
   LogOut,
-  Shield,
   ChevronRight,
 } from 'lucide-react'
 import { cn } from '@cricket/ui'
+import Image from 'next/image'
 
 const ADMIN_NAV = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -33,12 +33,18 @@ function AdminSidebar({ onLogout }: { onLogout: () => void }) {
     <aside className="w-60 flex-shrink-0 bg-ink-surface border-r border-ink-border flex flex-col min-h-screen">
       {/* Logo */}
       <div className="flex items-center gap-3 px-5 py-5 border-b border-ink-border">
-        <div className="w-8 h-8 bg-gold-gradient rounded-sm flex items-center justify-center">
-          <Shield className="w-4 h-4 text-ink" />
+        <div className="relative w-10 h-10 flex-shrink-0">
+          <Image 
+            src="/logo.png" 
+            alt="Eagle Ground Logo" 
+            fill 
+            className="object-contain grayscale brightness-0 invert"
+            sizes="40px"
+          />
         </div>
         <div>
-          <p className="font-headline font-bold text-sm text-chalk leading-none">CRICKET</p>
-          <p className="font-headline font-bold text-xs text-gold leading-none">ELITE ADMIN</p>
+          <p className="font-headline font-bold text-sm text-chalk leading-none uppercase">EAGLE</p>
+          <p className="font-headline font-bold text-xs text-gold leading-none uppercase">GROUND ADMIN</p>
         </div>
       </div>
 
