@@ -45,7 +45,7 @@ export default function FinalizeMatchPage({ params }: { params: { matchId: strin
     }, [teamAPlayers, teamBPlayers])
 
     const initializeTeamIds = () => {
-        if (match && innings[0].team_id === '') {
+        if (match && match.team_a_id && innings[0].team_id === '') {
             setInnings([
                 { team_id: match.team_a_id._id, runs: 0, wickets: 0, overs: 0 },
                 { team_id: match.team_b_id._id, runs: 0, wickets: 0, overs: 0 }
