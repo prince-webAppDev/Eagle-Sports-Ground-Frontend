@@ -12,11 +12,18 @@ function addToCalendar(match: Match) {
   const start = new Date(match.date)
   const end = new Date(start.getTime() + 4 * 60 * 60 * 1000) // +4h estimate
   const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+  
+  const teamA = match.teamA || match.team_a_id
+  const teamB = match.teamB || match.team_b_id
+  const venue = match.venue || match.ground || 'Eagle Sports Ground'
+  
+  const title = `${teamA?.shortName || teamA?.short_name || 'TBD'} vs ${teamB?.shortName || teamB?.short_name || 'TBD'}`
+  
   const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
-    `${match.teamA?.shortName ?? 'TBD'} vs ${match.teamB?.shortName ?? 'TBD'}`
+    title
   )}&dates=${fmt(start)}/${fmt(end)}&details=${encodeURIComponent(
-    `Match #${match.matchNumber} · ${match.venue}`
-  )}&location=${encodeURIComponent(match.venue)}`
+    `Match #${match.matchNumber} · ${venue}`
+  )}&location=${encodeURIComponent(venue)}`
   window.open(url, '_blank')
 }
 
