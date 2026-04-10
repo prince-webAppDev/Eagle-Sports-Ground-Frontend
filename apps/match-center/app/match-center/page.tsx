@@ -13,12 +13,25 @@ export default function MatchCenterPage() {
   const [search, setSearch] = useState('')
 
   const filtered = matches?.filter((m) => {
-    const matchesFilter = filter === 'all' || m.status === filter
+    // Case-insensitive status check
+    const status = m.status?.toLowerCase() || ''
+    const matchesFilter = filter === 'all' || status === filter.toLowerCase()
+
+    const searchLower = search.toLowerCase()
+    const teamAName = (m.teamA?.name || m.team_a_id?.name || '').toLowerCase()
+    const teamBName = (m.teamB?.name || m.team_b_id?.name || '').toLowerCase()
+    const teamAShort = (m.teamA?.shortName || m.teamA?.short_name || m.team_a_id?.shortName || m.team_a_id?.short_name || '').toLowerCase()
+    const teamBShort = (m.teamB?.shortName || m.teamB?.short_name || m.team_b_id?.shortName || m.team_b_id?.short_name || '').toLowerCase()
+    const location = (m.venue || m.ground || '').toLowerCase()
+
     const matchesSearch =
       !search ||
-      m.teamA.name.toLowerCase().includes(search.toLowerCase()) ||
-      m.teamB.name.toLowerCase().includes(search.toLowerCase()) ||
-      m.venue.toLowerCase().includes(search.toLowerCase())
+      teamAName.includes(searchLower) ||
+      teamBName.includes(searchLower) ||
+      teamAShort.includes(searchLower) ||
+      teamBShort.includes(searchLower) ||
+      location.includes(searchLower)
+
     return matchesFilter && matchesSearch
   })
 

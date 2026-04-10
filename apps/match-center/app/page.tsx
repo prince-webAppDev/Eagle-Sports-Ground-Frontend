@@ -196,11 +196,47 @@ function AllMatchesSection() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  const displayMatches = matches?.slice(0, 8) ?? []
-  const maxIndex = Math.max(0, displayMatches.length - itemsToShow)
+  const allMatches = matches ?? []
+  const displayMatches = [...allMatches, ...allMatches, ...allMatches]
+  const listLength = allMatches.length
+  
+  // Set starting index to the middle copy so it can scroll left or right immediately
+  useEffect(() => {
+    if (listLength > 0 && currentIndex === 0) {
+      setCurrentIndex(listLength)
+    }
+  }, [listLength])
 
-  const next = () => setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1))
-  const prev = () => setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1))
+  const maxIndex = displayMatches.length - itemsToShow
+
+  const next = () => {
+    setCurrentIndex((prev) => {
+      const nextIdx = prev + 1
+      // If we go towards the end of the 3rd set, jump back to the middle set
+      if (nextIdx > listLength * 2) return listLength
+      return nextIdx
+    })
+  }
+
+  const prev = () => {
+    setCurrentIndex((prev) => {
+      const prevIdx = prev - 1
+      // If we go towards the start of the 1st set, jump forward to the middle set
+      if (prevIdx < listLength - itemsToShow) return listLength * 2 - itemsToShow
+      return prevIdx
+    })
+  }
+
+  // Auto-scroll logic
+  useEffect(() => {
+    if (isLoading || !allMatches.length) return
+    
+    const interval = setInterval(() => {
+      next()
+    }, 4000) 
+
+    return () => clearInterval(interval)
+  }, [isLoading, allMatches.length, listLength, itemsToShow])
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 overflow-hidden">
@@ -233,16 +269,16 @@ function AllMatchesSection() {
           </div>
         ) : (
           <motion.div 
-            className="flex gap-6"
-            animate={{ x: `-${currentIndex * (100 / itemsToShow)}%` }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="flex"
+            animate={{ x: `-${currentIndex * (100 / displayMatches.length)}%` }}
+            transition={{ duration: 0.8, ease: [0.32, 0.72, 0, 1] }}
             style={{ width: `${(displayMatches.length / itemsToShow) * 100}%` }}
           >
-            {displayMatches.map((match) => (
+            {displayMatches.map((match, idx) => (
               <div 
-                key={match._id} 
+                key={`${match._id}-${idx}`} 
                 style={{ width: `${100 / displayMatches.length}%` }}
-                className="px-1"
+                className="px-3"
               >
                 <MatchCard match={match} />
               </div>
@@ -251,21 +287,7 @@ function AllMatchesSection() {
         )}
       </div>
 
-      {/* Progress dots */}
-      {!isLoading && displayMatches.length > itemsToShow && (
-        <div className="flex justify-center gap-2 mt-8">
-          {Array.from({ length: maxIndex + 1 }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentIndex(i)}
-              className={cn(
-                "h-1.5 transition-all duration-300 rounded-full",
-                currentIndex === i ? "w-8 bg-gold" : "w-1.5 bg-ink-border hover:bg-chalk-dim"
-              )}
-            />
-          ))}
-        </div>
-      )}
+
     </section>
   )
 }
