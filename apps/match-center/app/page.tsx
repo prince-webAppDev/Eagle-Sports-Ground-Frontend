@@ -151,8 +151,8 @@ function TournamentStats() {
     ? [
         { label: 'Total Teams', value: tournament.totalTeams, icon: <Users className="w-4 h-4" />, highlight: false },
         { label: 'Total Matches', value: tournament.totalMatches, icon: <Zap className="w-4 h-4" />, highlight: false },
-        { label: 'Top Scorer', value: tournament.topScorer?.name ?? '—', sublabel: `${tournament.topScorer?.stats.runs ?? 0} runs`, icon: <Star className="w-4 h-4" />, highlight: true },
-        { label: 'Top Wicket Taker', value: tournament.topWicketTaker?.name ?? '—', sublabel: `${tournament.topWicketTaker?.stats.wickets ?? 0} wickets`, icon: <TrophyIcon className="w-4 h-4" />, highlight: true },
+        { label: 'Top Scorer', value: tournament.topScorer?.name ?? '—', sublabel: `${tournament.topScorer?.stats?.runs ?? 0} runs`, icon: <Star className="w-4 h-4" />, highlight: true },
+        { label: 'Top Wicket Taker', value: tournament.topWicketTaker?.name ?? '—', sublabel: `${tournament.topWicketTaker?.stats?.wickets ?? 0} wickets`, icon: <TrophyIcon className="w-4 h-4" />, highlight: true },
       ]
     : []
 

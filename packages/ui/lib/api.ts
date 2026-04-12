@@ -119,6 +119,7 @@ export interface Match {
   ground: string
   venue?: string // Keep for legacy, but use ground primarily
   date: string
+  startTime?: string
   status: 'Upcoming' | 'live' | 'Completed'
   team_a_id: Team
   team_b_id: Team
@@ -127,6 +128,9 @@ export interface Match {
   innings?: Innings[]
   scorecard?: Scorecard
   result?: string
+  tossWinner?: string
+  tossDecision?: string
+  manOfTheMatch?: Player
   createdAt?: string
   updatedAt?: string
 }

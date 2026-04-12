@@ -374,22 +374,22 @@ export default function MatchDetailPage({
       </div>
 
       {/* Match Stats Row */}
-      {match.innings?.length > 0 && (
+      {(match.innings?.length ?? 0) > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
             {
               label: 'Total Runs',
-              value: match.innings.reduce((a, b) => a + b.runs, 0),
+              value: match.innings!.reduce((a, b) => a + b.runs, 0),
               icon: <Activity className="w-4 h-4" />,
             },
             {
               label: 'Total Wickets',
-              value: match.innings.reduce((a, b) => a + b.wickets, 0),
+              value: match.innings!.reduce((a, b) => a + b.wickets, 0),
               icon: <Target className="w-4 h-4" />,
             },
             {
               label: 'Total Sixes',
-              value: match.innings
+              value: match.innings!
                 .flatMap((i) => i.battingOrder ?? [])
                 .reduce((a, b) => a + (b.sixes ?? 0), 0),
               icon: <Zap className="w-4 h-4" />,
@@ -408,7 +408,7 @@ export default function MatchDetailPage({
       )}
 
       {/* Innings Chart */}
-      {match.innings?.length >= 2 && <InningsChart innings={match.innings} />}
+      {(match.innings?.length ?? 0) >= 2 && <InningsChart innings={match.innings!} />}
 
       {/* Scorecards */}
       {match.innings?.map((inn, i) => (

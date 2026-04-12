@@ -3,8 +3,8 @@ import { cn } from '../lib/utils'
 
 interface PlayerAvatarProps {
   name: string
-  avatar: string
-  role: string
+  avatar?: string
+  role?: string
   jerseyNumber?: number
   size?: 'sm' | 'md' | 'lg'
   showRole?: boolean
@@ -76,7 +76,7 @@ export default function PlayerAvatar({
           <span
             className={cn(
               'inline-block text-[10px] font-body font-medium px-2 py-0.5 rounded-sm border mt-1',
-              ROLE_COLOR[role] || 'bg-ink-border text-chalk-muted border-ink-border'
+              (role && ROLE_COLOR[role]) || 'bg-ink-border text-chalk-muted border-ink-border'
             )}
           >
             {role}
