@@ -1,10 +1,10 @@
 {
-  "name": "cricket-monorepo",
+  "name": "cricket-elite-monorepo",
   "version": "1.0.0",
   "private": true,
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "dev": "turbo dev",
