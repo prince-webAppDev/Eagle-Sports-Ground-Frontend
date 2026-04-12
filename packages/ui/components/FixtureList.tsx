@@ -41,11 +41,11 @@ export default function FixtureList({ matches }: FixtureListProps) {
       {matches.map((match) => (
         <div
           key={match._id}
-          className="flex items-center gap-4 py-3 px-4 hover:bg-ink-card/50 transition-colors group rounded-lg"
+          className="flex items-center gap-4 py-3 px-4 hover:bg-ink-card transition-all duration-300 group rounded-lg hover:scale-[1.01] hover:shadow-xl hover:shadow-gold/5 origin-left cursor-default"
         >
           {/* Match number */}
-          <div className="w-8 h-8 rounded-sm bg-ink-border flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-headline font-bold text-chalk-muted">
+          <div className="w-8 h-8 rounded-sm bg-ink-border flex items-center justify-center flex-shrink-0 group-hover:bg-gold/10 transition-colors">
+            <span className="text-xs font-headline font-bold text-chalk-muted group-hover:text-gold">
               #{match.matchNumber}
             </span>
           </div>
@@ -62,13 +62,7 @@ export default function FixtureList({ matches }: FixtureListProps) {
                     match.team_a_id?.logo || 
                     '/team-placeholder.png'
                   }
-                  alt={
-                    match.teamA?.shortName || 
-                    match.teamA?.short_name || 
-                    match.team_a_id?.shortName || 
-                    match.team_a_id?.short_name || 
-                    'Team A'
-                  }
+                  alt="Team A"
                   fill
                   className="object-contain"
                   sizes="20px"
@@ -80,6 +74,8 @@ export default function FixtureList({ matches }: FixtureListProps) {
                   match.teamA?.short_name || 
                   match.team_a_id?.shortName || 
                   match.team_a_id?.short_name || 
+                  match.teamA?.name ||
+                  match.team_a_id?.name ||
                   'TBD'
                 }
               </span>
@@ -93,13 +89,7 @@ export default function FixtureList({ matches }: FixtureListProps) {
                     match.team_b_id?.logo || 
                     '/team-placeholder.png'
                   }
-                  alt={
-                    match.teamB?.shortName || 
-                    match.teamB?.short_name || 
-                    match.team_b_id?.shortName || 
-                    match.team_b_id?.short_name || 
-                    'Team B'
-                  }
+                  alt="Team B"
                   fill
                   className="object-contain"
                   sizes="20px"
@@ -111,6 +101,8 @@ export default function FixtureList({ matches }: FixtureListProps) {
                   match.teamB?.short_name || 
                   match.team_b_id?.shortName || 
                   match.team_b_id?.short_name || 
+                  match.teamB?.name ||
+                  match.team_b_id?.name ||
                   'TBD'
                 }
               </span>

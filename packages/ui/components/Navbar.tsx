@@ -4,8 +4,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
-import { useAuth } from '../context/AuthContext'
-import ActionBtn from './ActionBtn'
 import { cn } from '../lib/utils'
 import Image from 'next/image'
 
@@ -18,7 +16,6 @@ const NAV_LINKS = [
 
 export default function Navbar() {
     const pathname = usePathname()
-    const { user, logout } = useAuth()
     const [open, setOpen] = useState(false)
 
     return (
@@ -32,7 +29,7 @@ export default function Navbar() {
                                 src="/logo.png" 
                                 alt="Eagle Ground Logo" 
                                 fill 
-                                className="object-contain"
+                                className="object-contain brightness-0 invert"
                                 sizes="48px"
                             />
                         </div>
@@ -59,24 +56,9 @@ export default function Navbar() {
                         ))}
                     </nav>
 
-                    {/* Auth */}
+                    {/* Auth - Removed as per user request */}
                     <div className="hidden md:flex items-center gap-3">
-                        {user && (
-                            <>
-                                <Link
-                                    href="/admin/dashboard"
-                                    className="text-sm text-gold font-medium font-body hover:text-gold-bright transition-colors"
-                                >
-                                    Dashboard
-                                </Link>
-                                <button
-                                    onClick={logout}
-                                    className="text-sm text-chalk-muted hover:text-chalk font-body transition-colors"
-                                >
-                                    Logout
-                                </button>
-                            </>
-                        )}
+                        {/* Auth buttons removed */}
                     </div>
 
                     {/* Mobile hamburger */}
