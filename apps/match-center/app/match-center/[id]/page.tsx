@@ -21,7 +21,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts'
-import { MapPin, Calendar, Trophy, Zap, Target, Activity } from 'lucide-react'
+import { MapPin, Calendar, Trophy, Zap, Target, Activity, Users } from 'lucide-react'
 import Image from 'next/image'
 
 // ─── Scorecard Table ──────────────────────────────────────────────────────────
@@ -253,6 +253,8 @@ export default function MatchDetailPage({
   // Robust data mapping
   const teamA = match.teamA || match.team_a_id || {}
   const teamB = match.teamB || match.team_b_id || {}
+  const teamAPlayers = (match as any).teamAPlayers || []
+  const teamBPlayers = (match as any).teamBPlayers || []
   const teamALogo = teamA.logo_url || teamA.logo || '/team-placeholder.png'
   const teamBLogo = teamB.logo_url || teamB.logo || '/team-placeholder.png'
   const venueName = match.venue || match.ground || 'TBD'
@@ -301,7 +303,7 @@ export default function MatchDetailPage({
           <div className="flex flex-col sm:grid sm:grid-cols-[1fr_auto_1fr] items-center gap-8 sm:gap-4 md:gap-8">
             {/* Team A */}
             <div className="flex flex-col items-center sm:flex-row sm:items-center gap-3 sm:gap-4">
-              <div className="relative w-16 h-16 sm:w-20 sm:h-20 img-hover-color">
+              <div className="relative w-16 h-16 sm:w-20 sm:h-20">
                 <Image
                   src={teamALogo}
                   alt={teamA.name || 'Team A'}
@@ -312,7 +314,7 @@ export default function MatchDetailPage({
               </div>
               <div className="text-center sm:text-left">
                 <p className="font-headline font-black text-chalk text-lg sm:text-xl">
-                  {teamA.shortName || teamA.short_name || 'TBD'}
+                  {teamA.short_name || teamA.shortName || teamA.name || 'TBD'}
                 </p>
                 <p className="text-chalk-dim text-xs font-body hidden sm:block">{teamA.name || 'Team A'}</p>
                 {match.innings?.[0] && (
@@ -336,7 +338,7 @@ export default function MatchDetailPage({
 
             {/* Team B */}
             <div className="flex flex-col items-center sm:flex-row-reverse sm:items-center gap-3 sm:gap-4">
-              <div className="relative w-16 h-16 sm:w-20 sm:h-20 img-hover-color">
+              <div className="relative w-16 h-16 sm:w-20 sm:h-20">
                 <Image
                   src={teamBLogo}
                   alt={teamB.name || 'Team B'}
@@ -347,7 +349,7 @@ export default function MatchDetailPage({
               </div>
               <div className="text-center sm:text-right">
                 <p className="font-headline font-black text-chalk text-lg sm:text-xl">
-                  {teamB.shortName || teamB.short_name || 'TBD'}
+                  {teamB.short_name || teamB.shortName || teamB.name || 'TBD'}
                 </p>
                 <p className="text-chalk-dim text-xs font-body hidden sm:block">{teamB.name || 'Team B'}</p>
                 {match.innings?.[1] && (
@@ -434,6 +436,129 @@ export default function MatchDetailPage({
               size="sm"
               showRole
             />
+          </div>
+        </div>
+      )}
+
+      {/* Team Players Rosters */}
+      {(teamAPlayers.length > 0 || teamBPlayers.length > 0) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Team A Players */}
+          <div className="bg-ink-card border border-ink-border rounded-xl overflow-hidden">
+            <div className="flex items-center gap-3 p-5 border-b border-ink-border bg-ink-surface/50">
+              <div className="relative w-8 h-8 flex-shrink-0">
+                <Image
+                  src={teamALogo}
+                  alt={teamA.name || 'Team A'}
+                  fill
+                  className="object-contain"
+                  sizes="32px"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-gold" />
+                <h3 className="font-headline font-bold text-chalk text-sm">
+                  {teamA.name || 'Team A'} Squad
+                </h3>
+              </div>
+              <span className="ml-auto text-xs text-chalk-muted font-body">
+                {teamAPlayers.length} players
+              </span>
+            </div>
+            <div className="divide-y divide-ink-border/50">
+              {teamAPlayers.map((player: any) => (
+                <div
+                  key={player._id}
+                  className="flex items-center gap-3 p-4 hover:bg-ink-surface/30 transition-colors"
+                >
+                  <div className="relative w-10 h-10 rounded-full overflow-hidden bg-ink-surface flex-shrink-0 border border-ink-border">
+                    {player.image_url ? (
+                      <Image
+                        src={player.image_url}
+                        alt={player.name}
+                        fill
+                        className="object-cover"
+                        sizes="40px"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-chalk-muted text-sm font-headline font-bold">
+                        {player.name?.charAt(0)}
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-body font-semibold text-chalk text-sm truncate">
+                      {player.name}
+                    </p>
+                    <p className="text-xs text-chalk-muted font-body">
+                      {player.position}
+                    </p>
+                  </div>
+                </div>
+              ))}
+              {teamAPlayers.length === 0 && (
+                <p className="text-chalk-dim text-sm font-body p-4">No players added yet.</p>
+              )}
+            </div>
+          </div>
+
+          {/* Team B Players */}
+          <div className="bg-ink-card border border-ink-border rounded-xl overflow-hidden">
+            <div className="flex items-center gap-3 p-5 border-b border-ink-border bg-ink-surface/50">
+              <div className="relative w-8 h-8 flex-shrink-0">
+                <Image
+                  src={teamBLogo}
+                  alt={teamB.name || 'Team B'}
+                  fill
+                  className="object-contain"
+                  sizes="32px"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-gold" />
+                <h3 className="font-headline font-bold text-chalk text-sm">
+                  {teamB.name || 'Team B'} Squad
+                </h3>
+              </div>
+              <span className="ml-auto text-xs text-chalk-muted font-body">
+                {teamBPlayers.length} players
+              </span>
+            </div>
+            <div className="divide-y divide-ink-border/50">
+              {teamBPlayers.map((player: any) => (
+                <div
+                  key={player._id}
+                  className="flex items-center gap-3 p-4 hover:bg-ink-surface/30 transition-colors"
+                >
+                  <div className="relative w-10 h-10 rounded-full overflow-hidden bg-ink-surface flex-shrink-0 border border-ink-border">
+                    {player.image_url ? (
+                      <Image
+                        src={player.image_url}
+                        alt={player.name}
+                        fill
+                        className="object-cover"
+                        sizes="40px"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-chalk-muted text-sm font-headline font-bold">
+                        {player.name?.charAt(0)}
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-body font-semibold text-chalk text-sm truncate">
+                      {player.name}
+                    </p>
+                    <p className="text-xs text-chalk-muted font-body">
+                      {player.position}
+                    </p>
+                  </div>
+                </div>
+              ))}
+              {teamBPlayers.length === 0 && (
+                <p className="text-chalk-dim text-sm font-body p-4">No players added yet.</p>
+              )}
+            </div>
           </div>
         </div>
       )}
