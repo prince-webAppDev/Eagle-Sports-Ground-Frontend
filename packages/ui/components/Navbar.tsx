@@ -12,6 +12,7 @@ const NAV_LINKS = [
     { label: 'Match Center', href: '/match-center' },
     { label: 'Teams', href: '/teams' },
     { label: 'Venues', href: '/venues' },
+    { label: 'Gallery', href: '/gallery' },
 ]
 
 export default function Navbar() {
@@ -21,19 +22,19 @@ export default function Navbar() {
     return (
         <header className="sticky top-0 z-50 w-full glass border-b border-ink-border">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex h-16 items-center justify-between">
+                <div className="flex h-20 items-center justify-between">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-3 group">
-                        <div className="relative w-12 h-12 flex-shrink-0">
+                        <div className="relative w-16 h-16 flex-shrink-0">
                             <Image 
                                 src="/logo.png" 
                                 alt="Eagle Ground Logo" 
                                 fill 
                                 className="object-contain brightness-0 invert"
-                                sizes="48px"
+                                sizes="64px"
                             />
                         </div>
-                        <span className="font-headline font-bold text-xl text-chalk tracking-tight uppercase">
+                        <span className="font-headline font-bold text-2xl text-chalk tracking-tight uppercase">
                             EAGLE<span className="text-gold">GROUND</span>
                         </span>
                     </Link>
